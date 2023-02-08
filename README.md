@@ -1,2 +1,2 @@
 # IT314_project_1
-Employee Management
+Employee Management System
