@@ -49,9 +49,10 @@ var EmployeeDetails = new mongoose.Schema(
         },
         DateOfBirth:{
             type: Date
-        }
-
-
+        },
+        AbsentDates : [{
+            type: Date,
+        }]
     }
 )
 
