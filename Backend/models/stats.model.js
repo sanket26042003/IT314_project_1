@@ -10,9 +10,17 @@ var statSchema = new mongoose.Schema(
             type: Number,
             default: 0
         },
-        NoOfApplication:{
-            type: Number,
-            default: 0
+        Attendance: {
+            type: [{
+                key: {
+                    type: Number,
+                    required: true
+                },
+                value : {
+                    type: Boolean,
+                    default: false
+                }
+            }]
         }
     }
 )

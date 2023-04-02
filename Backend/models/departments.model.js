@@ -10,6 +10,10 @@ var DepartmentSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        currentProject:{
+            type: String,
+            required: true
+        },
         NumberOfEmployee:{  // A risky feature. Try to implement trigger https://www.mongodb.com/docs/manual/reference/operator/aggregation/add/
             type: Number,
             default: 0

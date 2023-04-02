@@ -1,5 +1,6 @@
 const mongoose = require('mongoose') ;
 const Department = require('./departments.model')
+const plm = require('passport-local-mongoose')
 
 var EmployeeDetails = new mongoose.Schema(
     {
@@ -11,6 +12,16 @@ var EmployeeDetails = new mongoose.Schema(
         EmployeeName:{
             type: String,
             required: true
+        },
+        username: {
+            type: String,
+            required: true,
+            unique: true
+        },
+        Email: {
+            type: String,
+            required: true,
+            unique: true
         },
         Gender:{
             type: String
@@ -27,9 +38,6 @@ var EmployeeDetails = new mongoose.Schema(
             ref: 'Department',     // Reference to departments table.
             field:'DepartmentID',
             required: false
-        },
-        CurrentProject:{
-            type: String
         },
         Post:{
             type: String,
@@ -55,6 +63,8 @@ var EmployeeDetails = new mongoose.Schema(
         }]
     }
 )
+
+EmployeeDetails.plugin(plm);
 
 module.exports = mongoose.model('Employee', EmployeeDetails)
 

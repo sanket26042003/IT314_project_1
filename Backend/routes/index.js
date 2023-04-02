@@ -1,18 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const Department = require('../models/departments.model')
-const Attendance = require('../models/attendance.model')
 const Stat = require('../models/stats.model')
 const cron = require('node-cron')
 const Employee = require('../models/employee.model')
 
 // Initialization
 async function StatInitialize() {
-    await Stat.create({});
+    const check = await Stat.find({});
+    if(!check)
+        await Stat.create({});
 }
 StatInitialize();
 
-cron.schedule('0 0 0 * * *', function(){   // A trigger set to execute any node function at a given time. Here it is 1st of every month at 00:01
+cron.schedule('0 0 0 * * *', function(){   // A trigger set to execute any node function at a given time. Here it is everyday of every month at 00:00
     console.log("Done");
 
 });
@@ -27,7 +28,6 @@ const def_attendance = async()=>{
 
 // a few random routes
 // -----------------------------------------------------------------------
-
 
 
 router.get('/', async (req,res)=>{     // home page
