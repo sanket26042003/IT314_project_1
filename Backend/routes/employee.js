@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Department = require('../models/departments.model')
 const Employee = require('../models/employee.model')
-const Attendance = require('../models/attendance.model')
 const Stat = require('../models/stats.model')
+const passport = require('passport')
 
 router.get('/', async function(req, res){   // List of all Employee Profiles
     try{
@@ -17,19 +17,44 @@ router.get('/', async function(req, res){   // List of all Employee Profiles
 
 router.post('/', async (req,res)=>{     // Create New employee
     try{
-        console.log(req) ;
-        const newemployee = new Employee(req.body)
-        var query =  await Stat.findOneAndUpdate({},  // to increment no. of employees which will define employee ID // only 1 doc in collection
-        {$inc:{NoOfEmployee:1}},
-        {new:true});
-        newemployee.EmployeeID = query.NoOfEmployee
-        const result = await Employee.create(newemployee);
-        // console.log(newemployee.Department);
-        await Department.findOneAndUpdate({DepartmentID:1},       // to increment no. of employees in that department
-        {$inc:{NumberOfEmployee:1}},
-        {new:true});
-        await Attendance.create({EmployeeID:newemployee.EmployeeID});
-        res.send(`${result.EmployeeName} successfully created!!`)
+
+        const data = req.body;
+        
+        // to increment no. of employees which will define employee ID
+        // only 1 doc in collection
+        var query =  await Stat.findOneAndUpdate({},
+            {$inc:{NoOfEmployee:1}},
+            {new:true}
+        );
+
+        await Stat.findOneAndUpdate({},
+            {$push: {
+            Attendance: {
+                key: query.NoOfEmployee,
+                value: 0
+            }}
+        })
+        
+        
+        data.EmployeeID = query.NoOfEmployee
+
+        // remove password
+        const clone = (({ password, ...rest }) => rest)(data);
+
+        // const result = await Employee.create(newemployee);
+
+        const employee = await new Employee(clone);
+        const newEmployee = await Employee.register(employee, data.password);
+
+        // to increment no. of employees in that department
+        await Department.findOneAndUpdate({DepartmentID:1},
+            {$inc:{NumberOfEmployee:1}},
+            {new:true}
+        );
+        
+        console.log(newEmployee);
+
+        res.send(`${newEmployee.EmployeeName} successfully created!!`)
     }catch(err){
         res.status(500).send(err.message)
     }
