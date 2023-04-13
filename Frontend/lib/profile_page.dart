@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'models/profile.dart';
+
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
@@ -16,6 +18,7 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
       body: Container(
+        //itemCount: MyProfile.items.length,
         color: Colors.white,
         child: Column(
           children: [
@@ -31,12 +34,11 @@ class ProfilePage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     maxRadius: 50,
                     minRadius: 50,
                     backgroundColor: Colors.white,
-                    backgroundImage: NetworkImage(
-                        'https://media.licdn.com/dms/image/C4D03AQHeGQues54a7A/profile-displayphoto-shrink_400_400/0/1660370113184?e=1683158400&v=beta&t=FxMldRbrHibOS5cycOepPay-DGi3FZz0GOucq7uSuiw'),
+                    backgroundImage: NetworkImage(MyProfile.profiles[0].image),
                     //backgroundImage: AssetImage('assets/nicherSaaS_1.jpg'),
                   ),
                   const SizedBox(
@@ -46,21 +48,21 @@ class ProfilePage extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Text(
-                        "Sanket Doshi",
-                        style: TextStyle(
+                        MyProfile.profiles[0].EmployeeName,
+                        style: const TextStyle(
                             fontSize: 23,
                             fontWeight: FontWeight.bold,
                             color: Colors.white),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                         width: 5,
                       ),
                       Text(
-                        "Software Engineer",
-                        style: TextStyle(
+                        MyProfile.profiles[0].roll,
+                        style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                             color: Colors.white),
@@ -77,39 +79,48 @@ class ProfilePage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                ProfileDetailRow(title: 'Department', value: 'ICT'),
-                ProfileDetailRow(title: 'Current Project', value: 'IT314'),
+              children: [
+                ProfileDetailRow(
+                    title: 'Department',
+                    value: MyProfile.profiles[0].Department),
+                ProfileDetailRow(
+                    title: 'Current Project',
+                    value: MyProfile.profiles[0].currentProject),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                ProfileDetailRow(title: 'Manager', value: 'Bhargav'),
-                ProfileDetailRow(title: 'Post', value: 'Group Representative'),
+              children: [
+                ProfileDetailRow(
+                    title: 'Manager', value: MyProfile.profiles[0].Manager),
+                ProfileDetailRow(
+                    title: 'Post', value: MyProfile.profiles[0].Post),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                ProfileDetailRow(title: 'Gender', value: 'Male'),
-                ProfileDetailRow(title: 'Joining Year', value: '2020'),
+              children: [
+                ProfileDetailRow(
+                    title: 'Gender', value: MyProfile.profiles[0].Gender),
+                ProfileDetailRow(
+                    title: 'Joining Year',
+                    value: MyProfile.profiles[0].DateOfJoining),
               ],
             ),
             const SizedBox(
               height: 10,
               width: 10,
             ),
-            const ProfileDetailColumn(title: 'ID', value: '202001008'),
-            const ProfileDetailColumn(
-                title: 'Email', value: 'sanketdoshi1234567@gmail.com'),
-            const ProfileDetailColumn(
-                title: 'Phone number', value: '6353315349'),
-            const ProfileDetailColumn(
-                title: 'Address',
-                value: '943-C/S-7/Paramhans Appartments/Down Chowk')
+            ProfileDetailColumn(
+                title: 'ID', value: MyProfile.profiles[0].EmployeeID),
+            ProfileDetailColumn(
+                title: 'Email', value: MyProfile.profiles[0].Email),
+            ProfileDetailColumn(
+                title: 'Phone number', value: MyProfile.profiles[0].PhoneNo),
+            ProfileDetailColumn(
+                title: 'Address', value: MyProfile.profiles[0].Address)
           ],
         ),
       ),
