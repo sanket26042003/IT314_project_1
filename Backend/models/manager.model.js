@@ -9,7 +9,7 @@ var ManagerDetails = new mongoose.Schema(
         },
         ManagerName:{
             type: String,
-            required: true
+            required: true,
         },
         Gender:{
             type: String
