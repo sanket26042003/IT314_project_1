@@ -4,8 +4,20 @@ const Department = require('../models/departments.model')
 const Employee = require('../models/employee.model')
 const Stat = require('../models/stats.model')
 const passport = require('passport')
+const dateonly = require('mongoose-dateonly')
+const cron = require('node-cron')
 
-router.get('/', async function(req, res){   // List of all Employee Profiles
+async function AttendanceController(){
+    await Employee.updateMany({},{$push:{"AbsentDates":new Date()}})     // date is added to absent array
+}
+
+cron.schedule('0 1 0 * * *', function(){   // A trigger to execute at 00:01 everyday. 
+    AttendanceController() ;
+});
+
+AttendanceController();
+
+router.get('/', async function(req, res){            // List of all Employee Profiles
     try{
         const employee = await Employee.find({});
         res.send(employee) ;
@@ -15,7 +27,7 @@ router.get('/', async function(req, res){   // List of all Employee Profiles
     }
 });
 
-router.post('/', async (req,res)=>{     // Create New employee
+router.post('/create', async (req,res)=>{                 // Create New employee
     try{
 
         const data = req.body;
@@ -60,10 +72,8 @@ router.post('/', async (req,res)=>{     // Create New employee
     }
 }) ;
 
-router.patch('/:id', async (req,res)=>{     // edit employee by id
+router.patch('/profile/:id', async (req,res)=>{                            // edit employee by id
     try{
-        // console.log(req.body);
-        // console.log(result.body);
         const result = await Employee.findOneAndUpdate({EmployeeID:req.params.id}, req.body);
         res.send(`${req.body.EmployeeName} successfully updated!!`)
     }catch(err){
@@ -71,7 +81,7 @@ router.patch('/:id', async (req,res)=>{     // edit employee by id
     }
 }) ;
 
-router.get('/:id', async function(req, res){   // Read Employee Profile from ID
+router.get('/profile/:id', async function(req, res){                       // Read Employee Profile from ID
     try{
         const query = await Employee.findOne({EmployeeID:req.params.id});
         res.json(query) ;
@@ -80,6 +90,31 @@ router.get('/:id', async function(req, res){   // Read Employee Profile from ID
         res.json(err)
     }
 });
+
+router.get('/markattendance/:id',  async function(req, res){                          // Mark Attendance of employee with id
+    try{
+        const ans = await Employee.findOne({EmployeeID:req.params.id}, {AbsentDates:{ $slice: -1 }});    // Get last date in absent array
+        const dateToday = new Date();
+
+        // ans.absentDates will contain only last date in absent array
+        // .getDate() will return date of month. Delete entry if date at top of array is same as today's date
+
+        if(dateToday.getDate() == ans.AbsentDates[0].getDate())
+        {
+            await Employee.updateOne({EmployeeID: req.params.id},{$pop:{"AbsentDates":1}})   // remove last date from absent array
+            res.send("Attendance marked successfully")
+        }
+        else
+        {
+            res.send("Already marked attendance for today")
+        }
+
+    }
+    catch(err){
+        res.json(err)
+    }
+});
+
 
 
 

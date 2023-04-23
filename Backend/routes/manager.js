@@ -4,7 +4,7 @@ const Manager = require('../models/manager.model')
 const Employee = require('../models/employee.model')
 const Stat = require('../models/stats.model')
 
-router.post('/', async (req,res)=>{    // Create New manager
+router.post('/', async (req,res)=>{                                   // Create New manager
     try{
         const newmanager = new Manager(req.body)
         // to increment no. of manager which will define manager ID
@@ -19,7 +19,7 @@ router.post('/', async (req,res)=>{    // Create New manager
     }
 });
 
-router.patch('/:id', async (req,res)=>{    // edit manager
+router.patch('/:id', async (req,res)=>{                               // edit manager
     try{
         const result = await Manager.findOneAndUpdate({ManagerID: req.params.id}, req.body);
         res.send(`${req.body.ManagerName} successfully updated!!`)
@@ -28,7 +28,7 @@ router.patch('/:id', async (req,res)=>{    // edit manager
     }
 });
 
-router.get('/:id', async(req, res)=>{ // manager profile
+router.get('/:id', async(req, res)=>{                                    // manager profile
     try{
         const ans = await Manager.findOne({ManagerID:req.params.id});    // Get the employee document with given employeeID
         res.json(ans);
@@ -37,7 +37,17 @@ router.get('/:id', async(req, res)=>{ // manager profile
     {
         res.json(err) 
     }
-
 });
+
+router.get('/employeeUnderManager/:id', async(req, res)=>{   
+    try{
+        const ans = await Employee.find({Manager:req.params.id});    // Get the employees list under a particular manager
+        res.json(ans);
+    }
+    catch(err)
+    {
+        res.json(err) 
+    }    
+});                             
 
 module.exports = router

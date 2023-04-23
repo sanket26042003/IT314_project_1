@@ -1,6 +1,6 @@
 const mongoose = require('mongoose') ;
 const Department = require('./departments.model')
-const plm = require('passport-local-mongoose')
+const plm = require('passport-local-mongoose');
 
 var EmployeeDetails = new mongoose.Schema(
     {
@@ -49,7 +49,8 @@ var EmployeeDetails = new mongoose.Schema(
         },
         Manager:{
             type: mongoose.Schema.Types.Number,
-            ref: 'Manager'     // Reference to Manager table.
+            ref: 'Manager',     // Reference to Manager table.
+            index:true
         },
         DateOfJoining:{
             type: Date,
@@ -59,7 +60,7 @@ var EmployeeDetails = new mongoose.Schema(
             type: Date
         },
         AbsentDates : [{
-            type: Date,
+            type: Date
         }]
     }
 )

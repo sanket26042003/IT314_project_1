@@ -9,7 +9,7 @@ router.post('/', async(req, res)=>{     // create New Leave application
         const newleave = new LeaveApplication(req.body)
         const ans = await Employee.findOne({EmployeeID:newleave.ApplicantEmployeeID})
         newleave.ResponsibleManagerID = ans.Manager
-        var query =  await Stat.findOneAndUpdate({},       // to increment no. of employees which will define employee ID
+        var query =  await Stat.findOneAndUpdate({},       // to increment no. of employees which will define application ID
         {$inc:{NoOfApplication:1}},
         {new:true});
         newleave.ApplicationNumber = query.NoOfApplication
@@ -20,10 +20,11 @@ router.post('/', async(req, res)=>{     // create New Leave application
     }
 });
 
-router.post('/:id', async(req, res)=>{     // Approve Leave application
+router.post('/:id/:type', async(req, res)=>{     // Approve Leave application
     try{
         // here var name is temp, boolval will be later changed to actual name
-        if(req.body.boolval) {
+        // type will be 1 for approval and 0 for rejection
+        if(req.params.type) {
             const lapplication = LeaveApplication.findOneAndUpdate({ApplicationNumber: req.params.id}, {ApplicationStatus: "Approved"});
         } else {
             const lapplication = LeaveApplication.findOneAndUpdate({ApplicationNumber: req.params.id}, {ApplicationStatus: "Rejected"});
