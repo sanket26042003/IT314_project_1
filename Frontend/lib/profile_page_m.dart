@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'models/profile.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+class ProfilePageM extends StatelessWidget {
+  const ProfilePageM({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -122,16 +122,6 @@ class DesktopBody extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ProfileDetailRowD(
-                      title: 'Manager', value: MyProfile.profiles[0].Manager),
-                  ProfileDetailRowD(
-                      title: 'Post', value: MyProfile.profiles[0].roll),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ProfileDetailRowD(
                       title: 'Gender', value: MyProfile.profiles[0].Gender),
                   ProfileDetailRowD(
                       title: 'Joining Year',
@@ -231,16 +221,6 @@ class MobileBody extends StatelessWidget {
               ProfileDetailRow(
                   title: 'Current Project',
                   value: MyProfile.profiles[0].currentProject),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ProfileDetailRow(
-                  title: 'Manager', value: MyProfile.profiles[0].Manager),
-              ProfileDetailRow(
-                  title: 'Post', value: MyProfile.profiles[0].Post),
             ],
           ),
           Row(
