@@ -5,6 +5,7 @@ const Stat = require('../models/stats.model')
 const cron = require('node-cron')
 const Employee = require('../models/employee.model')
 
+
 // Initialization
 async function StatInitialize() {
     const check = await Stat.find({});
@@ -13,18 +14,24 @@ async function StatInitialize() {
 }
 StatInitialize();
 
-cron.schedule('0 0 0 * * *', function(){   // A trigger set to execute any node function at a given time. Here it is everyday of every month at 00:00
-    console.log("Done");
+// Attendance Controller
 
+async function AttendanceController(){
+    const ans = await Employee.updateMany({},{$push:{"AbsentDates":new Date()}},{new:true})     // date is added to absent array
+}
+
+cron.schedule('0 1 0 * * *', function(){   // A trigger to execute at 00:01 everyday. 
+    AttendanceController() ;
 });
 
-const def_attendance = async()=>{
-    const employee = await Employee.find({});
-    for(let e of employee)
-    {
-        e.AbsentDates.push(Date.now());
-    }
-};
+
+// const def_attendance = async()=>{
+//     const employee = await Employee.find({});
+//     for(let e of employee)
+//     {
+//         e.AbsentDates.push(Date.now());
+//     }   
+// };
 
 // a few random routes
 // -----------------------------------------------------------------------
