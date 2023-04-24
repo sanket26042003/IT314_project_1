@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Department = require('../models/departments.model');
-router.get('/getDept', async(req,res)=>{
+router.get('/', async(req,res)=>{
     try{
         const ans = await Department.find();
         res.json(ans);
@@ -12,4 +12,4 @@ router.get('/getDept', async(req,res)=>{
     }
 });
 
-module.exports = admin ;
+module.exports = router ;

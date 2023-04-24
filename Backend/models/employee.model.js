@@ -1,6 +1,7 @@
 const mongoose = require('mongoose') ;
 const Department = require('./departments.model')
 const plm = require('passport-local-mongoose');
+const bcrypt = require('bcrypt');
 
 var EmployeeDetails = new mongoose.Schema(
     {
@@ -13,10 +14,14 @@ var EmployeeDetails = new mongoose.Schema(
             type: String,
             required: true
         },
-        username: {
+        UserName: {
             type: String,
             required: true,
             unique: true
+        },
+        Password: {
+            type: String,
+            required: true,
         },
         Email: {
             type: String,
@@ -65,7 +70,45 @@ var EmployeeDetails = new mongoose.Schema(
     }
 )
 
-EmployeeDetails.plugin(plm);
+
+
+
+EmployeeDetails.pre('save',async function() {
+    try {
+        // const salt= await(bcrypt.genSalt(10));
+        const salt = 10 ;
+        const hashPass=await bcrypt.hash(this.Password,salt);
+        this.Password=hashPass; 
+        
+    } catch (error) {
+        throw error;
+    }
+});
+
+EmployeeDetails.methods.comparePassword=async function (candidatePassword) {
+    try {
+        const isMatch=await bcrypt.compare(candidatePassword,this.Password);
+        return isMatch;
+    } catch (error) {
+        console.log('er')
+        throw error
+    }
+};
+
+
+// EmployeeDetails.pre('save',async function() {
+    //     try {
+    //         const salt= await(bcrypt.genSalt(10,(err,salt)=>{
+    //             const hashPass=bcrypt.hash(this.Password,salt,(err,hash)=>{
+    //         });
+    //         }));
+            
+    //         this.Password=hashPass; 
+            
+    //     } catch (error) {
+    //         throw error;
+    //     }
+    // });
 
 module.exports = mongoose.model('Employee', EmployeeDetails)
 

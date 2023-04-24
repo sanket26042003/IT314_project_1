@@ -38,7 +38,8 @@ var leaveApplicationSchema = new mongoose.Schema(
         ResponsibleManagerID:{
             type: mongoose.Schema.Types.Number, // Reference to Employee table for manager
             ref:'Manager',
-            default:-1
+            default:-1,
+            index:true
         }
     }
 )

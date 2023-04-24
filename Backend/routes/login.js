@@ -1,25 +1,130 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const Employee = require('../models/employee.model')
+const Manager = require('../models/manager.model')
 
-router.post('/login', passport.authenticate('local'), async function(req, res){
-    try{
-        res.send('Succesfully logged in!');
-    }
-    catch(err){
-        res.status(500).send(err.message)
-    }
-});
-
-router.get('/logout', function(req, res){
-    req.logout(function(err) {
+router.post('/employeelogin', async (req, res) => {
+    let user;
+    try {
+        const {UserName,Password}=req.body;
         try{
-            res.send('Succesfully logged out!');
+            user = await Employee.findOne({UserName:UserName});
         }
         catch(err){
-            res.status(500).send(err.message)
+            console.log(err);
         }
-    });
+        if(!user){
+            throw new Error("User does not exist");
+        }
+
+        const isPasswordCorrect = user.comparePassword(Password) ;
+
+        if(isPasswordCorrect==false){
+            console.log('Password is not correct')
+            throw new Error("Password is not correct");
+        }
+
+        // creating token
+        let tokenData={
+            id:user.EmployeeID,
+            username:user.UserName,
+            position: "0" // 0 for employee
+        };
+
+        const token=await jwt.sign(tokenData,"secret",{expiresIn:"1h"});
+
+        res.status(200).json({
+            status:true,
+            success:"SendData",
+            token:token,
+        })
+
+
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
 });
+
+router.post('/managerlogin', async (req, res) => {
+    let user;
+    try {
+        const {UserName,Password}=req.body;
+        try{
+            user = await Manager.findOne({UserName:UserName});
+        }
+        catch(err){
+            console.log(err);
+        }
+        if(!user){
+            throw new Error("User does not exist");
+        }
+
+        const isPasswordCorrect = user.comparePassword(Password) ;
+
+        if(isPasswordCorrect==false){
+            console.log('Password is not correct')
+            throw new Error("Password is not correct");
+        }
+
+        // creating token
+        let tokenData={
+            id:user.ManagerID,
+            username:user.UserName,
+            position: "1" // 1 for manager
+        };
+
+        const token=await jwt.sign(tokenData,"secret",{expiresIn:"1h"});
+
+        res.status(200).json({
+            status:true,
+            success:"SendData",
+            token:token,
+        })
+
+
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+});
+
+router.post('/adminlogin', async (req, res) => {
+    let user;
+    try {
+        const {UserName,Password}=req.body;
+        
+
+        const isPasswordCorrect = "admin" === Password ;
+        const isUserCorrect = "admin" === UserName ;
+
+        if(isPasswordCorrect==false || isUserCorrect==false){
+            console.log('Password is not correct')
+            throw new Error("Password is not correct");
+        }
+
+        // creating token
+        let tokenData={
+            id:0,
+            username:admin,
+            position: "2" // 0 for admin
+        };
+
+        const token=await jwt.sign(tokenData,"secret",{expiresIn:"1h"});
+
+        res.status(200).json({
+            status:true,
+            success:"SendData",
+            token:token,
+        })
+
+
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+});
+
 
 module.exports = router;

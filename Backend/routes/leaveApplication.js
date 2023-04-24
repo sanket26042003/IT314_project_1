@@ -25,7 +25,11 @@ router.post('/:id/:type', async(req, res)=>{     // Approve Leave application
         // here var name is temp, boolval will be later changed to actual name
         // type will be 1 for approval and 0 for rejection
         if(req.params.type) {
-            const lapplication = LeaveApplication.findOneAndUpdate({ApplicationNumber: req.params.id}, {ApplicationStatus: "Approved"});
+            try{
+                const lapplication = await LeaveApplication.findOneAndUpdate({ApplicationNumber: req.params.id}, {ApplicationStatus: "Approved"});
+            }catch(err){
+                res.json(err)
+            }
         } else {
             const lapplication = LeaveApplication.findOneAndUpdate({ApplicationNumber: req.params.id}, {ApplicationStatus: "Rejected"});
         }
@@ -38,7 +42,6 @@ router.post('/:id/:type', async(req, res)=>{     // Approve Leave application
 router.get('/:id', async function(req, res){   // All leave appllication of a particular manager
     try{
         const query = await LeaveApplication.find({ResponsibleManagerID:req.params.id});
-        console.log(query) ;
         res.json(query);
     }
     catch(err){
