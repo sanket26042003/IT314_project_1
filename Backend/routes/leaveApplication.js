@@ -8,15 +8,16 @@ router.post('/', async(req, res)=>{     // create New Leave application
     try{
         const newleave = new LeaveApplication(req.body)
         const ans = await Employee.findOne({EmployeeID:newleave.ApplicantEmployeeID})
+        if(!ans) return res.status(500).send({"error":"Employee does not exist"});
         newleave.ResponsibleManagerID = ans.Manager
         var query =  await Stat.findOneAndUpdate({},       // to increment no. of employees which will define application ID
         {$inc:{NoOfApplication:1}},
         {new:true});
         newleave.ApplicationNumber = query.NoOfApplication
         const result = await LeaveApplication.create(newleave);
-        res.send(`${result.ApplicationNumber} successfully created!!`)
+        res.status(200).send({"success":"true"}) ;
     }catch(err){
-        res.json(err)
+        res.status(500).json(err)
     }
 });
 
@@ -33,29 +34,29 @@ router.post('/:id/:type', async(req, res)=>{     // Approve Leave application
         } else {
             const lapplication = LeaveApplication.findOneAndUpdate({ApplicationNumber: req.params.id}, {ApplicationStatus: "Rejected"});
         }
-        res.send(200);
+        res.status(200).json(lapplication);
     }catch(err){
-        res.json(err)
+        res.status(500).json(err)
     }
 });
 
 router.get('/:id', async function(req, res){   // All leave appllication of a particular manager
     try{
         const query = await LeaveApplication.find({ResponsibleManagerID:req.params.id});
-        res.json(query);
+        res.status(200).json(query);
     }
     catch(err){
-        res.json(err)
+        res.status(500).json(err)
     }
 });
 
 router.patch('/:id', async function(req, res){
     try{
         const query = await LeaveApplication.findOneAndUpdate({ApplicationNumber:req.params.id}, req.body, {new:true}) ;
-        res.json(query)
+        res.status(200).json(query)
     }
     catch(err){
-        res.json(err)
+        res.status(500).json(err)
     }
 });
 

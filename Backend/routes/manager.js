@@ -29,26 +29,26 @@ router.patch('/:id', async (req,res)=>{                               // edit ma
     }
 });
 
-router.get('/:id', async(req, res)=>{                                    // manager profile
+router.get('/:id', async(req, res)=>{                                    // managerprofile
     try{
-        const ans = await Manager.findOne({ManagerID:req.params.id});    // Get the employee document with given employeeID
-        res.json(ans);
+        const ans = await Manager.findOne({ManagerID:req.params.id});    // Get the manager document with given managerID
+        res.status(200).json(ans);
     }
     catch(err)
     {
-        res.json(err) 
+        res.status(500).json(err) 
     }
 });
 
 router.get('/employeemanager/:id', async(req, res)=>{   
     try{
         const ans = await Employee.find({Manager:req.params.id});    // Get the employees list under a particular manager
-        res.json(ans);
+        res.status(200).json(ans);
     }
     catch(err)
     {
-        res.json(err) 
-    }    
+        res.status(500).json(err) 
+    }
 });     
 
 
@@ -63,11 +63,11 @@ router.get('/markattendance/:id',  async function(req, res){                    
         if(dateToday.getDate() == ans.AbsentDates[0].getDate())
         {
             await Manager.updateOne({ManagerID: req.params.id},{$pop:{"AbsentDates":1}})   // remove last date from absent array
-            res.send("Attendance marked successfully")
+            res.status(200).send({"success":"Attendance marked successfully"})
         }
         else
         {
-            res.send("Already marked attendance for today")
+            res.status(200).send({"error":"Already marked attendance for today"})
         }
 
     }
@@ -89,9 +89,9 @@ router.get('/attendance/:id',async (req,res)=>{                              // 
 
         const presentdays = totaldays - absentdays ;
         console.log(presentdays, absentdays, totaldays)
-        res.send({"present":presentdays, "absent":absentdays, "total":totaldays}) ;
+        res.status(200).send({"present":presentdays, "absent":absentdays, "total":totaldays}) ;
     } catch(err){
-        res.json(err);
+        res.status(500).json(err);
     }
 
 

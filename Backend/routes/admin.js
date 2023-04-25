@@ -4,11 +4,11 @@ const Department = require('../models/departments.model');
 router.get('/', async(req,res)=>{
     try{
         const ans = await Department.find();
-        res.json(ans);
+        res.status(200).json(ans);
     }
     catch(err)
     {
-        res.json(err)
+        res.status(500).json(err)
     }
 });
 
