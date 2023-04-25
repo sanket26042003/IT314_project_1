@@ -13,6 +13,7 @@ router.post('/employeelogin', async (req, res) => {
         }
         catch(err){
             console.log(err);
+            res.status(500).json(err) ;
         }
         if(!user){
             throw new Error("User does not exist");
@@ -21,7 +22,6 @@ router.post('/employeelogin', async (req, res) => {
         const isPasswordCorrect = user.comparePassword(Password) ;
 
         if(isPasswordCorrect==false){
-            console.log('Password is not correct')
             throw new Error("Password is not correct");
         }
 
@@ -42,8 +42,7 @@ router.post('/employeelogin', async (req, res) => {
 
 
     } catch (error) {
-        console.log(error);
-        next(error);
+        res.status(500).json(error) ;
     }
 });
 
@@ -56,6 +55,7 @@ router.post('/managerlogin', async (req, res) => {
         }
         catch(err){
             console.log(err);
+            res.status(500).json(err) ;
         }
         if(!user){
             throw new Error("User does not exist");
@@ -64,7 +64,6 @@ router.post('/managerlogin', async (req, res) => {
         const isPasswordCorrect = user.comparePassword(Password) ;
 
         if(isPasswordCorrect==false){
-            console.log('Password is not correct')
             throw new Error("Password is not correct");
         }
 
@@ -85,8 +84,7 @@ router.post('/managerlogin', async (req, res) => {
 
 
     } catch (error) {
-        console.log(error);
-        next(error);
+        res.status(500).json(error) ;
     }
 });
 
@@ -121,8 +119,7 @@ router.post('/adminlogin', async (req, res) => {
 
 
     } catch (error) {
-        console.log(error);
-        next(error);
+        res.status(500).json(error) ;
     }
 });
 
