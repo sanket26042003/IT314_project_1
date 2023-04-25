@@ -6,7 +6,8 @@ var ManagerDetails = new mongoose.Schema(
         ManagerID:{
             type: Number,
             required: true,
-            default: 0
+            default: 0,
+            unique: true
         },
         ManagerName:{
             type: String,
@@ -24,10 +25,12 @@ var ManagerDetails = new mongoose.Schema(
             type: String
         },
         Gender:{
-            type: String
+            type: String,
+            required: true
         },
         Address:{
-            type: String
+            type: String,
+            required:true
         },
         PhoneNo:{
             type: String,
@@ -37,6 +40,9 @@ var ManagerDetails = new mongoose.Schema(
             type: mongoose.Schema.Types.Number,
             ref: 'Department',     // Reference to departments table.
             field:'DepartmentID'
+        },
+        DepartmentName:{
+            type: String,
         },
         Project:{
             type: String

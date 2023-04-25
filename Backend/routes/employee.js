@@ -15,7 +15,7 @@ router.get('/allemployee', async function(req, res){            // List of all E
         res.status(200).send(employee) ;
     }
     catch(err){
-        res.status(500).json(err)
+        res.json(err)
     }
 });
 
@@ -50,20 +50,23 @@ router.post('/', async (req,res)=>{                 // Create New employee
 
         // const employee = await new Employee(clone);
         // const newEmployee = await Employee.register(employee, data.password);
-        const newEmployee = new Employee(data);
-        await newEmployee.save();
 
 
         // to increment no. of employees in that department
         const managerdata = await Manager.findOne({ManagerID:data.Manager});
-        await Department.findOneAndUpdate({DepartmentID:managerdata.Department},
+        const dept = await Department.findOneAndUpdate({DepartmentID:managerdata.Department},
             {$inc:{NumberOfEmployee:1}},
             {new:true}
         );
 
+        data.Project = managerdata.Project;
+        data.DepartmantName = dept.DepartmentName;
+        const newEmployee = new Employee(data);
+        await newEmployee.save();
+
         res.status(200).json({"success":"true"}) ;
     }catch(err){
-        res.status(500).send(err)
+        res.status(500).send(err.message)
     }
 }) ;
 
@@ -81,6 +84,7 @@ router.get('/:id', async function(req, res){                       // Read Emplo
         const query = await Employee.findOne({EmployeeID:req.params.id}).lean();
         const ans = await Manager.findOne({ManagerID:query.Manager});
         query.ManagerName = ans.ManagerName ;
+        query.SalaryToCredit = query.Salary/22*(22-query.AbsentDates.length) ;
         res.status(200).json(query) ;
     }
     catch(err){
@@ -124,7 +128,7 @@ router.get('/attendance/:id',async (req,res)=>{                              // 
         const presentdays = totaldays - absentdays ;
         res.status(200).send({"present":presentdays, "absent":absentdays, "total":totaldays}) ;
     } catch(err){
-        res.status(200).json(err);
+        res.status(500).json(err);
     }
 
 

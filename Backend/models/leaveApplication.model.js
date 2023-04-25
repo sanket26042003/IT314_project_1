@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const employee = require('./employee.model')
+const Manager = require('./manager.model')
 
 var leaveApplicationSchema = new mongoose.Schema(
     {
@@ -36,10 +37,12 @@ var leaveApplicationSchema = new mongoose.Schema(
             default: 'In Process'
         },
         ResponsibleManagerID:{
-            type: mongoose.Schema.Types.Number, // Reference to Employee table for manager
-            ref:'Manager',
-            default:-1,
-            index:true
+           // type: mongoose.Schema.Types.Number  , // Reference to Employee table for manager
+           type:Number,
+           // ref:'Manager',
+           // field:'ManagerID',
+           default:-1,
+           index: true
         }
     }
 )

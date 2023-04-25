@@ -4,17 +4,19 @@ const Manager = require('../models/manager.model')
 const Employee = require('../models/employee.model')
 const Stat = require('../models/stats.model')
 const bcrypt = require('bcrypt');
+const Department = require('../models/departments.model')
 
 router.post('/', async (req,res)=>{                                   // Create New manager
     try{
         const newmanager = new Manager(req.body)
         // to increment no. of manager which will define manager ID
-        var query =  await Stat.findOneAndUpdate({},
-            {$inc:{NoOfManager:1}},
-            {new:true});
+        var tmp =  await Stat.findOne({'_id':'64451e19f213a2b7c257d225'});
+        var query = await Stat.findOneAndUpdate({'_id':'64451e19f213a2b7c257d225'},{NoOfManager:tmp.NoOfManager+1});
         newmanager.ManagerID = query.NoOfManager;
+        const dept = await Department.findOne({DepartmentID:newmanager.Department});
+        newmanager.DepartmentName = dept.DepartmentName;
         const result = await Manager.create(newmanager);
-        res.send(`${result.ManagerName} successfully created!!`)
+        res.status(200).json({"success":"true"}) ;
     }catch(err){
         res.status(500).send(err.message)
     }
@@ -23,15 +25,19 @@ router.post('/', async (req,res)=>{                                   // Create 
 router.patch('/:id', async (req,res)=>{                               // edit manager
     try{
         const result = await Manager.findOneAndUpdate({ManagerID: req.params.id}, req.body);
-        res.send(`${req.body.ManagerName} successfully updated!!`)
+        res.status(200).send({"success":"true"});
     }catch(err){
         res.status(500).send(err.message)
     }
 });
 
-router.get('/:id', async(req, res)=>{                                    // managerprofile
+router.get('/:id', async(req, res)=>{                                    // manager profile
     try{
         const ans = await Manager.findOne({ManagerID:req.params.id});    // Get the manager document with given managerID
+        ans.SalaryToCredit = ans.Salary/22*(22-ans.AbsentDates.length) ;
+        if(ans == null)
+        res.status(500).json(ans);
+        else
         res.status(200).json(ans);
     }
     catch(err)
@@ -79,7 +85,7 @@ router.get('/markattendance/:id',  async function(req, res){                    
 
 router.get('/attendance/:id',async (req,res)=>{                              // Get attendance of all employees
     try{
-        const ans = await Manager.findOne({managerID:req.params.id}) ;
+        const ans = await Manager.findOne({ManagerID:req.params.id}) ;
         if(ans.AbsentDates.length > 0)
             absentdays = ans.AbsentDates.length ;
         else
@@ -88,13 +94,13 @@ router.get('/attendance/:id',async (req,res)=>{                              // 
 
 
         const presentdays = totaldays - absentdays ;
-        console.log(presentdays, absentdays, totaldays)
-        res.status(200).send({"present":presentdays, "absent":absentdays, "total":totaldays}) ;
+        res.status(200).status(200).send({"present":presentdays, "absent":absentdays, "total":totaldays}) ;
     } catch(err){
         res.status(500).json(err);
     }
 
 
 });
+
 
 module.exports = router

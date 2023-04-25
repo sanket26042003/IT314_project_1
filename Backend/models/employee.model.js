@@ -29,10 +29,12 @@ var EmployeeDetails = new mongoose.Schema(
             unique: true
         },
         Gender:{
-            type: String
+            type: String,
+            required: true
         },
         Address:{
-            type: String
+            type: String,
+            required:true
         },
         PhoneNo:{
             type: String,
@@ -41,12 +43,17 @@ var EmployeeDetails = new mongoose.Schema(
         Department:{
             type: mongoose.Schema.Types.Number,
             ref: 'Department',     // Reference to departments table.
-            field:'DepartmentID',
-            required: false
+            field:'DepartmentID'
+        },
+        DepartmentName:{
+            type: String
         },
         Post:{
             type: String,
             required: true
+        },
+        Project:{
+            type: String
         },
         Salary:{
             type: Number,

@@ -43,6 +43,7 @@ router.post('/employeelogin', async (req, res) => {
 
     } catch (error) {
         res.status(500).json(error) ;
+        // next(error);
     }
 });
 
@@ -88,6 +89,7 @@ router.post('/managerlogin', async (req, res) => {
     }
 });
 
+
 router.post('/adminlogin', async (req, res) => {
     let user;
     try {
@@ -98,14 +100,13 @@ router.post('/adminlogin', async (req, res) => {
         const isUserCorrect = "admin" === UserName ;
 
         if(isPasswordCorrect==false || isUserCorrect==false){
-            console.log('Password is not correct')
-            throw new Error("Password is not correct");
+            throw new Error("Username or Password incorrect");
         }
 
         // creating token
         let tokenData={
             id:0,
-            username:admin,
+            username:"admin",
             position: "2" // 0 for admin
         };
 
