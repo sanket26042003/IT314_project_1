@@ -8,42 +8,43 @@ router.post('/employeelogin', async (req, res) => {
     let user;
     try {
 
-        const {UserName,Password}=req.body;
-        user = await Employee.findOne({"UserName":UserName});
-        if(!user){
-           throw new Error("User does not exist");
+        const { UserName, Password } = req.body;
+        user = await Employee.findOne({ "UserName": UserName });
+        if (!user) {
+            throw new Error("User does not exist");
         }
 
-        const isPasswordCorrect = await user.comparePassword(Password) ;
-        if(!isPasswordCorrect){
+        const isPasswordCorrect = await user.comparePassword(Password);
+        if (!isPasswordCorrect) {
             throw new Error("Password is not correct");
         }
 
         // creating token
-        let tokenData={
-            id:user.EmployeeID,
-            username:user.UserName,
+        let tokenData = {
+            id: user.EmployeeID,
+            username: user.UserName,
             position: "0" // 0 for employee
         };
-        
-        const token=await jwt.sign(tokenData,"secret",{expiresIn:"1h"});
-        
+
+        const token = await jwt.sign(tokenData, "secret", { expiresIn: "1h" });
+
+        // .cookie("access_token", token, {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === "production",
+        // })
         return res
-        .status(200)
-        .cookie("access_token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-        })
-        .json({
-            status:true,
-            success:"SendData"
-        })
+            .status(200)
+            .setHeader('Set-Cookie', `access_token=${token}`)
+            .json({
+                status: true,
+                success: "SendData"
+            })
 
     } catch (err) {
         console.log(err);
         return res
-        .status(500)
-        .send("Error Occured");
+            .status(500)
+            .send("Error Occured");
         // next(error);
     }
 });
@@ -51,43 +52,43 @@ router.post('/employeelogin', async (req, res) => {
 router.post('/managerlogin', async (req, res) => {
     let user;
     try {
-        const {UserName,Password}=req.body;
+        const { UserName, Password } = req.body;
 
-        user = await Manager.findOne({UserName:UserName});
-        if(!user){
+        user = await Manager.findOne({ UserName: UserName });
+        if (!user) {
             throw new Error("User does not exist");
         }
 
-        const isPasswordCorrect = await user.comparePassword(Password) ;
-        if(!isPasswordCorrect){
+        const isPasswordCorrect = await user.comparePassword(Password);
+        if (!isPasswordCorrect) {
             throw new Error("Password is not correct");
         }
 
         // creating token
-        let tokenData={
-            id:user.ManagerID,
-            username:user.UserName,
+        let tokenData = {
+            id: user.ManagerID,
+            username: user.UserName,
             position: "1" // 1 for manager
         };
 
-        const token=await jwt.sign(tokenData,"secret",{expiresIn:"1h"});
+        const token = await jwt.sign(tokenData, "secret", { expiresIn: "1h" });
 
         res
-        .status(200)
-        .cookie("access_token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-        })
-        .json({
-            status:true,
-            success:"SendData"
-        })
+            .status(200)
+            .cookie("access_token", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+            })
+            .json({
+                status: true,
+                success: "SendData"
+            })
 
     } catch (err) {
         console.log(err);
         return res
-        .status(500)
-        .send("Error Occured");
+            .status(500)
+            .send("Error Occured");
     }
 });
 
@@ -95,38 +96,38 @@ router.post('/managerlogin', async (req, res) => {
 router.post('/adminlogin', async (req, res) => {
     let user;
     try {
-        const {UserName,Password}=req.body;
-        const isPasswordCorrect = "admin" === Password ;
-        const isUserCorrect = "admin" === UserName ;
+        const { UserName, Password } = req.body;
+        const isPasswordCorrect = "admin" === Password;
+        const isUserCorrect = "admin" === UserName;
 
-        if(isPasswordCorrect==false || isUserCorrect==false){
+        if (isPasswordCorrect == false || isUserCorrect == false) {
             throw new Error("Username or Password incorrect");
         }
 
         // creating token
-        let tokenData={
-            id:0,
-            username:"admin",
+        let tokenData = {
+            id: 0,
+            username: "admin",
             position: "2" // 0 for admin
         };
 
-        const token=await jwt.sign(tokenData,"secret",{expiresIn:"1h"});
+        const token = await jwt.sign(tokenData, "secret", { expiresIn: "1h" });
 
         res
-        .status(200)
-        .cookie("access_token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-        })
-        .json({
-            status:true,
-            success:"SendData"
-        })
+            .status(200)
+            .cookie("access_token", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+            })
+            .json({
+                status: true,
+                success: "SendData"
+            })
     } catch (err) {
         console.log(err);
         return res
-        .status(500)
-        .send("Error Occured");
+            .status(500)
+            .send("Error Occured");
     }
 });
 
