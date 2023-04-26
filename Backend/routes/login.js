@@ -7,21 +7,15 @@ const Manager = require('../models/manager.model')
 router.post('/employeelogin', async (req, res) => {
     let user;
     try {
+
         const {UserName,Password}=req.body;
-        try{
-            user = await Employee.findOne({UserName:UserName});
-        }
-        catch(err){
-            console.log(err);
-            res.status(500).json(err) ;
-        }
+        user = await Employee.findOne({"UserName":UserName});
         if(!user){
-            throw new Error("User does not exist");
+           throw new Error("User does not exist");
         }
 
-        const isPasswordCorrect = user.comparePassword(Password) ;
-
-        if(isPasswordCorrect==false){
+        const isPasswordCorrect = await user.comparePassword(Password) ;
+        if(!isPasswordCorrect){
             throw new Error("Password is not correct");
         }
 
@@ -31,18 +25,25 @@ router.post('/employeelogin', async (req, res) => {
             username:user.UserName,
             position: "0" // 0 for employee
         };
-
+        
         const token=await jwt.sign(tokenData,"secret",{expiresIn:"1h"});
-
-        res.status(200).json({
+        
+        return res
+        .status(200)
+        .cookie("access_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        })
+        .json({
             status:true,
-            success:"SendData",
-            token:token,
+            success:"SendData"
         })
 
-
-    } catch (error) {
-        res.status(500).json(error) ;
+    } catch (err) {
+        console.log(err);
+        return res
+        .status(500)
+        .send("Error Occured");
         // next(error);
     }
 });
@@ -51,20 +52,14 @@ router.post('/managerlogin', async (req, res) => {
     let user;
     try {
         const {UserName,Password}=req.body;
-        try{
-            user = await Manager.findOne({UserName:UserName});
-        }
-        catch(err){
-            console.log(err);
-            res.status(500).json(err) ;
-        }
+
+        user = await Manager.findOne({UserName:UserName});
         if(!user){
             throw new Error("User does not exist");
         }
 
-        const isPasswordCorrect = user.comparePassword(Password) ;
-
-        if(isPasswordCorrect==false){
+        const isPasswordCorrect = await user.comparePassword(Password) ;
+        if(!isPasswordCorrect){
             throw new Error("Password is not correct");
         }
 
@@ -77,15 +72,22 @@ router.post('/managerlogin', async (req, res) => {
 
         const token=await jwt.sign(tokenData,"secret",{expiresIn:"1h"});
 
-        res.status(200).json({
+        res
+        .status(200)
+        .cookie("access_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        })
+        .json({
             status:true,
-            success:"SendData",
-            token:token,
+            success:"SendData"
         })
 
-
-    } catch (error) {
-        res.status(500).json(error) ;
+    } catch (err) {
+        console.log(err);
+        return res
+        .status(500)
+        .send("Error Occured");
     }
 });
 
@@ -94,8 +96,6 @@ router.post('/adminlogin', async (req, res) => {
     let user;
     try {
         const {UserName,Password}=req.body;
-        
-
         const isPasswordCorrect = "admin" === Password ;
         const isUserCorrect = "admin" === UserName ;
 
@@ -112,15 +112,21 @@ router.post('/adminlogin', async (req, res) => {
 
         const token=await jwt.sign(tokenData,"secret",{expiresIn:"1h"});
 
-        res.status(200).json({
-            status:true,
-            success:"SendData",
-            token:token,
+        res
+        .status(200)
+        .cookie("access_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
         })
-
-
-    } catch (error) {
-        res.status(500).json(error) ;
+        .json({
+            status:true,
+            success:"SendData"
+        })
+    } catch (err) {
+        console.log(err);
+        return res
+        .status(500)
+        .send("Error Occured");
     }
 });
 

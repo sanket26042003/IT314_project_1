@@ -6,10 +6,11 @@ const Stat = require('../models/stats.model')
 const passport = require('passport')
 const dateonly = require('mongoose-dateonly')
 const Manager = require('../models/manager.model')
+const { isLoggedIn, isManager, isAdmin } = require('../middleware')
 
 
-
-router.get('/allemployee', async function(req, res){            // List of all Employee Profiles
+// protected route: only for manager or admin
+router.get('/allemployee', isLoggedIn, isManager, async function(req, res){            // List of all Employee Profiles
     try{
         const employee = await Employee.find({});
         res.status(200).send(employee) ;
@@ -50,19 +51,17 @@ router.post('/', async (req,res)=>{                 // Create New employee
 
         // const employee = await new Employee(clone);
         // const newEmployee = await Employee.register(employee, data.password);
-
-
         // to increment no. of employees in that department
         const managerdata = await Manager.findOne({ManagerID:data.Manager});
         const dept = await Department.findOneAndUpdate({DepartmentID:managerdata.Department},
             {$inc:{NumberOfEmployee:1}},
             {new:true}
-        );
-
-        data.Project = managerdata.Project;
-        data.DepartmantName = dept.DepartmentName;
-        const newEmployee = new Employee(data);
-        await newEmployee.save();
+            );
+            
+            data.Project = managerdata.Project;
+            data.DepartmantName = dept.DepartmentName;
+            const newEmployee = new Employee(data);
+            await newEmployee.save();
 
         res.status(200).json({"success":"true"}) ;
     }catch(err){
@@ -121,10 +120,18 @@ router.get('/attendance/:id',async (req,res)=>{                              // 
     try{
         const ans = await Employee.findOne({EmployeeID:req.params.id}) ;
         if(ans.AbsentDates.length > 0)
-            absentdays = ans.AbsentDates.length ;
+        absentdays = ans.AbsentDates.length ;
         else
-            absentdays = 0 ;
-        totaldays = new Date().getDate() ;
+        absentdays = 0 ;
+        totaldays = 0 ;
+        if(ans.DateOfJoining.getMonth() == new Date().getMonth() && ans.DateOfJoining.getYear() == new Date().getYear())
+        {
+            totaldays = new Date().getDate() - ans.DateOfJoining.getDate() + 1;
+        }
+        else
+        {
+            totaldays = new Date().getDate() ;
+        }
         const presentdays = totaldays - absentdays ;
         res.status(200).send({"present":presentdays, "absent":absentdays, "total":totaldays}) ;
     } catch(err){

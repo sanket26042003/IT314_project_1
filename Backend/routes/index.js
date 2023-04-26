@@ -19,10 +19,10 @@ const Manager = require('../models/manager.model')
 
 async function AttendanceController(){
     await Employee.updateMany({},{$push:{"AbsentDates":new Date()}},{new:true})     // date is added to absent array
-    await Manager.updateMany({},{$push:{"AbsentDates":new Date()}}, {new:true})     // absent array is emptied
+    await Manager.updateMany({},{$push:{"AbsentDates":new Date()}}, {new:true})     
 }
 
-cron.schedule('0 0 1 * * *', function(){   // A trigger to execute at 00:01 everyday. 
+cron.schedule('0 1 0 * * *', function(){   // A trigger to execute at 00:01 everyday. 
     AttendanceController() ;
 });
 

@@ -18,6 +18,8 @@ const localStrategy = require('passport-local');
 require('dotenv').config();
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
+const cookieParser = require("cookie-parser");
+
 const port = process.env.PORT || "8000";
 
 
@@ -31,6 +33,7 @@ const app = express();
 
 app.use(express.urlencoded({extended:true}));
 app.use(express.json()) ;
+app.use(cookieParser());
 
 // ----------------------------------------------------------
 
