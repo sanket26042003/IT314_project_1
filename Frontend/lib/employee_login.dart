@@ -29,19 +29,22 @@ class EmployeeLogin extends StatelessWidget {
         if (constraints.maxWidth < 600) {
           return Container(
             width: size.width,
+            height: size.height,
             color: const Color.fromARGB(255, 46, 106, 238),
-            child: Column(
-              children: const [
-                UserButton(),
-                SizedBox(
-                  height: 25,
-                ),
-                WelcomeText(),
-                SizedBox(
-                  height: 25,
-                ),
-                EmployeeLoginForm()
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                children: const [
+                  UserButton(),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  WelcomeText(),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  EmployeeLoginForm()
+                ],
+              ),
             ),
           );
         } else {
@@ -308,23 +311,33 @@ class _EmployeeLoginFormState extends State<EmployeeLoginForm> {
         "UserName": username,
         "Password": password,
       };
-    //  print("hello1");
       var response = await http.post(Uri.parse("https://nicher-o3ai.onrender.com/login/employeelogin"),
           headers: <String, String>{"Content-Type": "application/json"},
           body: jsonEncode(loginBody));
-    //   print("hello2");
-      // var response = await http.post(Uri.parse("http://localhost:3000/login"),
-      //     headers: <String, String>{"Content-Type": "application/json"},
-      //     body: jsonEncode(loginBody));
+   
       
       var jsonResponse = jsonDecode(response.body);
-      if (jsonResponse["status"]) {
+      if (response.statusCode==200) {
         var myToken = jsonResponse["token"];
         prefs.setString('token', myToken);
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => HomePage(token: myToken)));
       } else {
-        print("something went wrong!!!");
+        // ignore: use_build_context_synchronously
+        showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Something went wrong!!!!'),
+          content: const Text('Maybe you enter wrong username or password'),
+          actions: <Widget>[
+            
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'OK'),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
       }
     }
   }
@@ -455,68 +468,8 @@ class UserButton extends StatelessWidget {
               bottomLeft: Radius.circular(50),
               bottomRight: Radius.circular(50))),
       child: Center(
-        child: SizedBox(
-          width: 0.8 * size.width,
-          child: Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, "/welcome_page");
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(32),
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 46, 106, 238),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(50),
-                      bottomLeft: Radius.circular(50),
-                    ),
-                  ),
-                  width: 0.4 * size.width,
-                  child: const Center(
-                    child: Text(
-                      "Employee",
-                      textScaleFactor: 1.3,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  padding: const EdgeInsets.only(
-                      top: 27, bottom: 27, right: 15, left: 15),
-                  width: 0.4 * size.width,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 5,
-                      color: const Color.fromARGB(255, 46, 106, 238),
-                    ),
-                    borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(50),
-                      bottomRight: Radius.circular(50),
-                    ),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Manager",
-                      textScaleFactor: 1.3,
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+        child: DesktopButton(),
+      )
     );
   }
 }

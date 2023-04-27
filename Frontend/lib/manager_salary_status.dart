@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 
-class SalaryStatus extends StatefulWidget {
-  final Map<String,dynamic>data;
-  const SalaryStatus({super.key, required this.data});
+class ManagerSalaryStatus extends StatelessWidget {
+    final Map<String,dynamic>data;
 
-  @override
-  State<SalaryStatus> createState() => _SalaryStatusState();
-}
+  const ManagerSalaryStatus({super.key, required this.data});
 
-class _SalaryStatusState extends State<SalaryStatus> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +20,10 @@ class _SalaryStatusState extends State<SalaryStatus> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth < 600) {
-            return  MobileBody(data:widget.data,);
+            return  MobileBody(data: data,);
           } else {
-            return  DesktopBody(data:widget.data,);
+            print(data);
+            return  DesktopBody(data: data,);
           }
         },
       ),
@@ -64,7 +61,7 @@ class DesktopBody extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children:  [
                     Text(
-                      data["EmployeeName"],
+                      data['ManagerName'],
                       style: TextStyle(
                           fontSize: 23,
                           fontWeight: FontWeight.bold,
@@ -75,7 +72,7 @@ class DesktopBody extends StatelessWidget {
                       width: 7,
                     ),
                     Text(
-                      "${data["EmployeeID"]}",
+                      "${data['ManagerID']}",
                       style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -110,7 +107,8 @@ class DesktopBody extends StatelessWidget {
                           width: 30,
                         ),
                         SalaryDetailColumnD(
-                            title: 'Post', value: data['Post']),
+                            title: 'Department', value: "${data['Department']}"),
+                        SalaryDetailColumnD(title: 'Project', value: "Project"),
                         SalaryDetailColumnD(
                             title: 'Monthly Salary', value: "${data['Salary']}"),
                         SalaryDetailColumnD(
@@ -162,7 +160,7 @@ class MobileBody extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children:  [
                     Text(
-                      data["EmployeeName"],
+                       data['ManagerName'],
                       style: TextStyle(
                           fontSize: 23,
                           fontWeight: FontWeight.bold,
@@ -173,7 +171,7 @@ class MobileBody extends StatelessWidget {
                       width: 7,
                     ),
                     Text(
-                      "${data["EmployeeID"]}",
+                   "${data['ManagerID']}",
                       style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -193,14 +191,14 @@ class MobileBody extends StatelessWidget {
                     height: 30,
                     width: 30,
                   ),
-                  SalaryDetailColumn(
-                      title: 'Post', value: data['Post']),
+                  SalaryDetailColumn(title: 'Department', value: "${data['Department']}"),
+                  SalaryDetailColumn(title: 'Project', value:"project"),
                   SalaryDetailColumn(
                       title: 'Monthly Salary', value: "${data['Salary']}"),
                   SalaryDetailColumn(
                       title: 'Number of absent days (in a month)', value: "${data['AbsentDates'].length}"),
                   SalaryDetailColumn(
-                      title: 'Amount to be credited', value: "${data['Salary']}")
+                      title: 'Amount to be credited', value:"${data['Salary']}")
                 ],
               ),
             )

@@ -1,4 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'home_page.dart';
 
 class ManagerLogin extends StatelessWidget {
   const ManagerLogin({super.key});
@@ -24,19 +30,22 @@ class ManagerLogin extends StatelessWidget {
         if (constraints.maxWidth < 600) {
           return Container(
             width: size.width,
+            height: size.height,
             color: const Color.fromARGB(255, 46, 106, 238),
-            child: Column(
-              children: const [
-                UserButton(),
-                SizedBox(
-                  height: 25,
-                ),
-                WelcomeText(),
-                SizedBox(
-                  height: 25,
-                ),
-                ManagerLoginForm()
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                children: const [
+                  UserButton(),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  WelcomeText(),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  ManagerLoginForm()
+                ],
+              ),
             ),
           );
         } else {
@@ -163,7 +172,7 @@ class DesktopButton extends StatelessWidget {
         Container(
           height: 80,
           width: 80,
-          padding: EdgeInsets.only(top:5),
+          padding: EdgeInsets.only(top: 5),
           decoration: BoxDecoration(
               color: const Color.fromARGB(255, 46, 106, 238),
               borderRadius: BorderRadius.circular(100),
@@ -235,7 +244,7 @@ class DesktopButton extends StatelessWidget {
         Container(
           height: 80,
           width: 80,
-          padding: EdgeInsets.only(top:5),
+          padding: EdgeInsets.only(top: 5),
           decoration: BoxDecoration(
               color: const Color.fromARGB(255, 46, 106, 238),
               borderRadius: BorderRadius.circular(100),
@@ -280,80 +289,149 @@ class ManagerLoginForm extends StatefulWidget {
 }
 
 class _ManagerLoginFormState extends State<ManagerLoginForm> {
+  late SharedPreferences prefs;
   bool passwordVisible = false;
+  String username = "";
+  String password = "";
+  final _formkey = GlobalKey<FormState>();
   @override
   void initState() {
     super.initState();
     passwordVisible = true;
+    initSharedPrefs();
+  }
+
+  void initSharedPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  void loginManager() async {
+    if (_formkey.currentState!.validate()) {
+      var loginBody = {
+        "UserName": username,
+        "Password": password,
+      };
+      var response = await http.post(
+          Uri.parse("https://nicher-o3ai.onrender.com/login/managerlogin"),
+          headers: <String, String>{"Content-Type": "application/json"},
+          body: jsonEncode(loginBody));
+     
+
+      var jsonResponse = jsonDecode(response.body);
+      if (response.statusCode==200) {
+        var myToken = jsonResponse["token"];
+        prefs.setString('token', myToken);
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => HomePage(token: myToken)));
+      } else {
+        // ignore: use_build_context_synchronously
+        showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Something went wrong!!!!'),
+          content: const Text('Maybe you enter wrong username or password'),
+          actions: <Widget>[
+            
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'OK'),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(25),
-      child: Column(children: [
-        TextFormField(
-          decoration: InputDecoration(
-              prefixIcon: const Icon(
-                Icons.email_outlined,
-                color: Colors.black,
-              ),
-              hintText: "Username",
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-              fillColor: Colors.white,
-              filled: true),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        TextFormField(
-          obscureText: passwordVisible,
-          decoration: InputDecoration(
-              prefixIcon: const Icon(
-                Icons.lock_outlined,
-                color: Colors.black,
-              ),
-              suffixIcon: IconButton(
-                icon: Icon(
-                    passwordVisible ? Icons.visibility : Icons.visibility_off),
-                onPressed: () {
-                  setState(
-                    () {
-                      passwordVisible = !passwordVisible;
-                    },
-                  );
-                },
-              ),
-              hintText: "Password",
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-              fillColor: Colors.white,
-              filled: true),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        InkWell(
-          onTap: () {},
-          child: Container(
-            width: 400,
-            height: 60,
-            decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(width: 3, color: Colors.white)),
-            child: const Center(
-              child: Text(
-                "login",
-                textScaleFactor: 1.1,
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+    return Form(
+      key: _formkey,
+      child: Padding(
+        padding: const EdgeInsets.all(25),
+        child: Column(children: [
+          TextFormField(
+            decoration: InputDecoration(
+                prefixIcon: const Icon(
+                  Icons.email_outlined,
+                  color: Colors.black,
+                ),
+                hintText: "Username",
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                fillColor: Colors.white,
+                filled: true),
+            onChanged: (value) {
+              username = value;
+            },
+            validator: (value) {
+              if (value!.isEmpty) {
+                return "username can not be empty";
+              }
+            },
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          TextFormField(
+            obscureText: passwordVisible,
+            decoration: InputDecoration(
+                prefixIcon: const Icon(
+                  Icons.lock_outlined,
+                  color: Colors.black,
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(passwordVisible
+                      ? Icons.visibility
+                      : Icons.visibility_off),
+                  onPressed: () {
+                    setState(
+                      () {
+                        passwordVisible = !passwordVisible;
+                      },
+                    );
+                  },
+                ),
+                hintText: "Password",
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                fillColor: Colors.white,
+                filled: true),
+            onChanged: (value) {
+              password = value;
+            },
+            validator: (value) {
+              if (value!.isEmpty) {
+                return "password can not be empty";
+              }
+            },
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          InkWell(
+            onTap: () {
+              loginManager();
+            },
+            child: Container(
+              width: 400,
+              height: 60,
+              decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(width: 3, color: Colors.white)),
+              child: const Center(
+                child: Text(
+                  "login",
+                  textScaleFactor: 1.1,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.white),
+                ),
               ),
             ),
-          ),
-        )
-      ]),
+          )
+        ]),
+      ),
     );
   }
 }
@@ -391,69 +469,7 @@ class UserButton extends StatelessWidget {
               bottomLeft: Radius.circular(50),
               bottomRight: Radius.circular(50))),
       child: Center(
-        child: SizedBox(
-          width: 0.8 * size.width,
-          child: Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, "/employee_login");
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(32),
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 46, 106, 238),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(50),
-                      bottomLeft: Radius.circular(50),
-                    ),
-                  ),
-                  width: 0.4 * size.width,
-                  child: const Center(
-                    child: Text(
-                      "Employee",
-                      textScaleFactor: 1.3,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, "/manager_login");
-                },
-                child: Container(
-                  padding: const EdgeInsets.only(
-                      top: 27, bottom: 27, right: 15, left: 15),
-                  width: 0.4 * size.width,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 5,
-                      color: const Color.fromARGB(255, 46, 106, 238),
-                    ),
-                    borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(50),
-                      bottomRight: Radius.circular(50),
-                    ),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Manager",
-                      textScaleFactor: 1.3,
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+       child: DesktopButton(),
       ),
     );
   }
