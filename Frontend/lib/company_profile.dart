@@ -71,23 +71,17 @@ class DesktopBody extends StatelessWidget {
 // ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.all(Radius.circular(75)),
-                      child: Image.asset(
-                        "assets/company_profile.png",
-                        // "https://picsum.photos/200",
-                        height: 400,
-                        width: 400,
-                        scale: 0.5,
-                        fit: BoxFit.fill,
-                      ),
+                      child: Image.network(
+                      // "assets/nicherSaaS_1.jpg",
+                      "https://th.bing.com/th/id/OIG.Zm7JwGm2K.5G5w2KJ1rr?pid=ImgGn",
+                      height: 400,
+                      width: 400,
+                      scale: 0.5,
+                      // fit: BoxFit.fill,
                     ),
-                    // Image.network(
-                    //   // "assets/nicherSaaS_1.jpg",
-                    //   "https://picsum.photos/200",
-                    //   height: 400,
-                    //   width: 400,
-                    //   scale: 0.5,
-                    //   // fit: BoxFit.fill,
-                    // ),
+                      
+                    ),
+                    
                   ),
                   Container(
                       width: 500,
@@ -170,8 +164,8 @@ class MobileBody extends StatelessWidget {
                     bottomRight: Radius.circular(50),
                     topLeft: Radius.circular(50),
                     topRight: Radius.elliptical(50, 0))),
-            child: Image.asset(
-              "assets/company_profile.png",
+            child: Image.network(
+              "https://th.bing.com/th/id/OIG.Zm7JwGm2K.5G5w2KJ1rr?pid=ImgGn",
               // height: 100,
               // fit: BoxFit.cover,
               // scale:

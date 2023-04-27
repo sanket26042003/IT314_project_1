@@ -71,27 +71,36 @@ class _EmployeeRegisterFormState extends State<EmployeeRegisterForm> {
   }
 
   void registerEmployee() async {
-    if (_formkey.currentState!.validate()) {
-      var regBody = {
-        "email": email,
-        "username": username,
-        "password": password,
-      };
-      print(regBody);
-      var response = await http.post(
-          Uri.parse("http://192.168.43.52:3000/registration"),
-          headers: <String, String>{"Content-Type": "application/json"},
-          body: jsonEncode(regBody));
+    print("hello");
+    var response = await http.get(
+          Uri.parse("http://10.200.6.59:8000/employee/"),
+          
+         );
+    print("hello2");
       var jsonResponse = jsonDecode(response.body);
+      print("hello3");
+      print(jsonResponse);
+    // if (_formkey.currentState!.validate()) {
+    //   var regBody = {
+    //     "email": email,
+    //     "username": username,
+    //     "password": password,
+    //   };
+    //   print(regBody);
+    //   var response = await http.post(
+    //       Uri.parse("http://localhost:3000/registration"),
+    //       headers: <String, String>{"Content-Type": "application/json"},
+    //       body: jsonEncode(regBody));
+    //   var jsonResponse = jsonDecode(response.body);
 
-      print(jsonResponse['status']);
+    //   print(jsonResponse['status']);
 
-      if (jsonResponse['status']) {
-        print("Registration done successfully");
-      } else {
-        print("SomeThing Went Wrong");
-      }
-    }
+    //   if (jsonResponse['status']) {
+    //     print("Registration done successfully");
+    //   } else {
+    //     print("SomeThing Went Wrong");
+    //   }
+    // }
   }
 
   @override
