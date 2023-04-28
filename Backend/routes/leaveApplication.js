@@ -3,8 +3,9 @@ const router = express.Router();
 const Employee = require('../models/employee.model')
 const LeaveApplication = require('../models/leaveApplication.model')
 const Stat = require('../models/stats.model')
+const { isLoggedIn, isManager, isAdmin } = require('../middleware')
 
-router.post('/', async(req, res)=>{     // create New Leave application
+router.post('/', isLoggedIn, async(req, res)=>{     // create New Leave application
     try{
         const newleave = new LeaveApplication(req.body)
         const ans = await Employee.findOne({EmployeeID:newleave.ApplicantEmployeeID}).lean();
@@ -22,7 +23,7 @@ router.post('/', async(req, res)=>{     // create New Leave application
     }
 });
 
-router.post('/:id/:type', async(req, res)=>{     // Approve Leave application
+router.post('/:id/:type', isLoggedIn, isManager, async(req, res)=>{     // Approve Leave application
     try{
         // here var name is temp, boolval will be later changed to actual name
         // type will be 1 for approval and 0 for rejection
@@ -65,7 +66,7 @@ router.post('/:id/:type', async(req, res)=>{     // Approve Leave application
 //     }
 // });
 
-router.get('/:id', async function(req, res){   // All leave appllication of a particular manager
+router.get('/:id', isLoggedIn, isManager, async function(req, res){   // All leave appllication of a particular manager
     try{
         const query = await LeaveApplication.find({ResponsibleManagerID:req.params.id});
         res.status(200).json(query);
@@ -76,7 +77,7 @@ router.get('/:id', async function(req, res){   // All leave appllication of a pa
 });
 
 
-router.get('/employeeleave/:id', async function(req, res){   // All leave appllication of a particular employee
+router.get('/employeeleave/:id', isLoggedIn, async function(req, res){   // All leave appllication of a particular employee
     try{
         const ans = await Employee.findOne({EmployeeID:req.params.id})
         const query = await LeaveApplication.find({ResponsibleManagerID:ans.Manager});

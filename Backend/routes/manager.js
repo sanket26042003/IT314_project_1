@@ -5,8 +5,9 @@ const Employee = require('../models/employee.model')
 const Stat = require('../models/stats.model')
 const bcrypt = require('bcrypt');
 const Department = require('../models/departments.model')
+const { isLoggedIn, isManager, isAdmin } = require('../middleware')
 
-router.post('/', async (req,res)=>{                                   // Create New manager
+router.post('/', isLoggedIn, isAdmin, async (req,res)=>{                                   // Create New manager
     try{
         const newmanager = new Manager(req.body)
         // to increment no. of manager which will define manager ID
@@ -23,7 +24,7 @@ router.post('/', async (req,res)=>{                                   // Create 
     }
 });
 
-router.patch('/:id', async (req,res)=>{                               // edit manager
+router.patch('/:id', isLoggedIn, isManager, async (req,res)=>{                               // edit manager
     try{
         const result = await Manager.findOneAndUpdate({ManagerID: req.params.id}, req.body);
         res.status(200).send({"success":"true"});
@@ -32,7 +33,7 @@ router.patch('/:id', async (req,res)=>{                               // edit ma
     }
 });
 
-router.get('/:id', async(req, res)=>{                                    // manager profile
+router.get('/:id', isLoggedIn, isManager, async(req, res)=>{                                    // manager profile
     try{
         const ans = await Manager.findOne({ManagerID:req.params.id}).lean();    // Get the manager document with given managerID
         ans.SalaryToCredit = ans.Salary/22*(22-ans.AbsentDates.length) ;
@@ -47,7 +48,7 @@ router.get('/:id', async(req, res)=>{                                    // mana
     }
 });
 
-router.get('/employeemanager/:id', async(req, res)=>{   
+router.get('/employeemanager/:id', isLoggedIn, isManager, async(req, res)=>{   
     try{
         const ans = await Employee.find({Manager:req.params.id});    // Get the employees list under a particular manager
         res.status(200).json(ans);
@@ -59,7 +60,7 @@ router.get('/employeemanager/:id', async(req, res)=>{
 });     
 
 
-router.get('/markattendance/:id',  async function(req, res){                          // Mark Attendance of employee with id
+router.get('/markattendance/:id', isLoggedIn, isManager, async function(req, res){                          // Mark Attendance of employee with id
     try{
         const ans = await Manager.findOne({ManagerID:req.params.id}, {AbsentDates:{ $slice: -1 }});    // Get last date in absent array
         const dateToday = new Date();
@@ -84,7 +85,7 @@ router.get('/markattendance/:id',  async function(req, res){                    
 });
 
 
-router.get('/attendance/:id',async (req,res)=>{                              // Get attendance of all employees
+router.get('/attendance/:id', isLoggedIn, isManager, async (req,res)=>{                              // Get attendance of all employees
     try{
         const ans = await Manager.findOne({ManagerID:req.params.id}) ;
         if(ans.AbsentDates.length > 0)

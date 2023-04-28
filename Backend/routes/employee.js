@@ -18,7 +18,7 @@ router.get('/allemployee', isLoggedIn, isManager, async function(req, res){     
     }
 });
 
-router.post('/', async (req,res)=>{                 // Create New employee
+router.post('/', isLoggedIn, isManager, async (req,res)=>{                 // Create New employee
     try{
 
         const data = req.body;
@@ -67,7 +67,7 @@ router.post('/', async (req,res)=>{                 // Create New employee
     }
 }) ;
 
-router.patch('/:id', async (req,res)=>{                            // edit employee by id
+router.patch('/:id', isLoggedIn, async (req,res)=>{                            // edit employee by id
     try{
         const result = await Employee.findOneAndUpdate({EmployeeID:req.params.id}, req.body);
         res.status(200).send({"success":"true"});
@@ -76,7 +76,7 @@ router.patch('/:id', async (req,res)=>{                            // edit emplo
     }
 }) ;
 
-router.get('/:id', async function(req, res){                       // Read Employee Profile from ID
+router.get('/:id', isLoggedIn, async function(req, res){                       // Read Employee Profile from ID
     try{
         const query = await Employee.findOne({EmployeeID:req.params.id}).lean();
         const ans = await Manager.findOne({ManagerID:query.Manager});
@@ -89,7 +89,7 @@ router.get('/:id', async function(req, res){                       // Read Emplo
     }
 });
 
-router.get('/markattendance/:id',  async function(req, res){                          // Mark Attendance of employee with id
+router.get('/markattendance/:id',  isLoggedIn, isManager, async function(req, res){                          // Mark Attendance of employee with id
     try{
         const ans = await Employee.findOne({EmployeeID:req.params.id}, {AbsentDates:{ $slice: -1 }});    // Get last date in absent array
         const dateToday = new Date();
@@ -114,7 +114,7 @@ router.get('/markattendance/:id',  async function(req, res){                    
 });
 
 
-router.get('/attendance/:id',async (req,res)=>{                              // Get attendance of all employees
+router.get('/attendance/:id', isLoggedIn, async (req,res)=>{                              // Get attendance of all employees
     try{
         const ans = await Employee.findOne({EmployeeID:req.params.id}) ;
         if(ans.AbsentDates.length > 0)

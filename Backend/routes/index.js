@@ -5,6 +5,7 @@ const Stat = require('../models/stats.model')
 const cron = require('node-cron')
 const Employee = require('../models/employee.model')
 const Manager = require('../models/manager.model')
+const { isLoggedIn, isManager, isAdmin } = require('../middleware')
 
 
 // Initialization

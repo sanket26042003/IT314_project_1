@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Employee = require('../models/employee.model')
 const Manager = require('../models/manager.model')
+const { isLoggedIn, isManager, isAdmin } = require('../middleware')
 
 router.post('/employeelogin', async (req, res) => {
     let user;
