@@ -3,14 +3,14 @@ const router = express.Router();
 const Employee = require('../models/employee.model')
 const LeaveApplication = require('../models/leaveApplication.model')
 const Stat = require('../models/stats.model')
-const Manager = require('../models/manager.model')
 
 router.post('/', async(req, res)=>{     // create New Leave application
     try{
         const newleave = new LeaveApplication(req.body)
-        const ans = await Employee.findOne({EmployeeID:newleave.ApplicantEmployeeID})
+        const ans = await Employee.findOne({EmployeeID:newleave.ApplicantEmployeeID}).lean();
         if(!ans) return res.status(500).send({"error":"Employee does not exist"});
         newleave.ResponsibleManagerID = ans.Manager
+        newleave.ApplicantName = ans.EmployeeName
         var query =  await Stat.findOneAndUpdate({},       // to increment no. of employees which will define application ID
         {$inc:{NoOfApplication:1}},
         {new:true});

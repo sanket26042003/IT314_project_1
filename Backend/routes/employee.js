@@ -3,8 +3,6 @@ const router = express.Router();
 const Department = require('../models/departments.model')
 const Employee = require('../models/employee.model')
 const Stat = require('../models/stats.model')
-const passport = require('passport')
-const dateonly = require('mongoose-dateonly')
 const Manager = require('../models/manager.model')
 const { isLoggedIn, isManager, isAdmin } = require('../middleware')
 

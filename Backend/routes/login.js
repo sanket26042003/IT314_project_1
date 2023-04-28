@@ -26,13 +26,13 @@ router.post('/employeelogin', async (req, res) => {
             position: "0" // 0 for employee
         };
 
-        const token = await jwt.sign(tokenData, "secret", { expiresIn: "1h" });
+        const token = await jwt.sign(tokenData, "secret", { expiresIn: 60*2 });
 
         return res
         .status(200)
         .cookie("access_token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: process.Env.NODE_ENV === "production",
         })
         .json({
             status: true,
@@ -71,7 +71,7 @@ router.post('/managerlogin', async (req, res) => {
             position: "1" // 1 for manager
         };
 
-        const token = await jwt.sign(tokenData, "secret", { expiresIn: "1h" });
+        const token = await jwt.sign(tokenData, "secret", { expiresIn: 60*2 });
 
         res
         .status(200)
@@ -112,7 +112,7 @@ router.post('/adminlogin', async (req, res) => {
             position: "2" // 0 for admin
         };
 
-        const token = await jwt.sign(tokenData, "secret", { expiresIn: "1h" });
+        const token = await jwt.sign(tokenData, "secret", { expiresIn: 60*2 });
 
         res
         .status(200)
