@@ -1,6 +1,4 @@
 const mongoose = require('mongoose') ;
-const Department = require('./departments.model')
-const plm = require('passport-local-mongoose');
 const bcrypt = require('bcrypt');
 
 var EmployeeDetails = new mongoose.Schema(
