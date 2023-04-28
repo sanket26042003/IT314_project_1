@@ -46,7 +46,7 @@ var EmployeeDetails = new mongoose.Schema(
             field:'DepartmentID'
         },
         DepartmentName:{
-            type: String
+            type: String,
         },
         Post:{
             type: String,

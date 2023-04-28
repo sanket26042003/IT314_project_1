@@ -47,7 +47,17 @@ router.get('/', async (req,res)=>{     // home page
     }catch(err){
         res.status(500).send(err.message)
     }
-}) ;
+});
+
+router.get('/logout', async (req,res)=>{     // home page
+    try{
+        res.clearCookie('access_token');
+        res.redirect('/');
+    }catch(err){
+        console.log(err)
+        res.status(500).send(err.message)
+    }
+});
 
 router.get('/department', async (req,res)=>{    // show New department
     try{

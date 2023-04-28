@@ -28,17 +28,17 @@ router.post('/employeelogin', async (req, res) => {
 
         const token = await jwt.sign(tokenData, "secret", { expiresIn: "1h" });
 
-        // .cookie("access_token", token, {
-        //     httpOnly: true,
-        //     secure: process.env.NODE_ENV === "production",
-        // })
         return res
-            .status(200)
-            .setHeader('Set-Cookie', `access_token=${token}`)
-            .json({
-                status: true,
-                success: "SendData"
-            })
+        .status(200)
+        .cookie("access_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        })
+        .json({
+            status: true,
+            success: "SendData",
+            token: token
+        })
 
     } catch (err) {
         console.log(err);
@@ -74,15 +74,16 @@ router.post('/managerlogin', async (req, res) => {
         const token = await jwt.sign(tokenData, "secret", { expiresIn: "1h" });
 
         res
-            .status(200)
-            .cookie("access_token", token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-            })
-            .json({
-                status: true,
-                success: "SendData"
-            })
+        .status(200)
+        .cookie("access_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        })
+        .json({
+            status: true,
+            success: "SendData",
+            token: token
+        })
 
     } catch (err) {
         console.log(err);
@@ -114,15 +115,16 @@ router.post('/adminlogin', async (req, res) => {
         const token = await jwt.sign(tokenData, "secret", { expiresIn: "1h" });
 
         res
-            .status(200)
-            .cookie("access_token", token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-            })
-            .json({
-                status: true,
-                success: "SendData"
-            })
+        .status(200)
+        .cookie("access_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        })
+        .json({
+            status: true,
+            success: "SendData",
+            token: token
+        })
     } catch (err) {
         console.log(err);
         return res

@@ -130,13 +130,12 @@ app.use((req, res, next) => {
   next();
 });
 // app.use(cors(corsOptions));
-app.use('/', usersRoute);
-app.use('/', login);
 app.use('/employee', employee);
 app.use('/leave', leaveApplication);
 app.use('/manager', manager);
 app.use('/login', login);
 app.use('/admin',admin);
+app.use('/', usersRoute);
 
 module.exports = app;
 
