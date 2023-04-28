@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:nicher/employee_list.dart';
 import 'package:nicher/employee_login.dart';
 
 import 'drawer.dart';
@@ -24,6 +24,7 @@ class _HomePageState extends State<HomePage> {
   late Future<int> cnt;
   @override
   void initState() {
+    print("hello world");
     // TODO: implement initState
     super.initState();
     Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
@@ -47,6 +48,10 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _refreshAttendanceStatus() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -63,15 +68,15 @@ class _HomePageState extends State<HomePage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.person,
-              color: Color.fromARGB(255, 255, 255, 255),
-            ),
-          )
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {},
+        //     icon: const Icon(
+        //       Icons.person,
+        //       color: Color.fromARGB(255, 255, 255, 255),
+        //     ),
+        //   )
+        // ],
       ),
       body: LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth < 600) {
@@ -90,9 +95,16 @@ class _HomePageState extends State<HomePage> {
                           username: username,
                           scale: 1),
                     ),
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 32, left: 50),
-                      child: AttendanceButton(),
+                      child: position != "2"
+                          ? AttendanceButton(
+                              ID: ID,
+                              position: position,
+                                onAttendanceMarked: _refreshAttendanceStatus,
+
+                            )
+                          : Container(),
                     ),
                   ],
                 ),
@@ -104,24 +116,31 @@ class _HomePageState extends State<HomePage> {
                   height: 20,
                 ),
                 Center(
-                  child: AttendanceStatusBox(
-                    ID: ID,
-                  ),
-                )
+                  child: position != "2"
+                      ? Padding(
+                          padding: const EdgeInsets.only(right: 35, left: 35),
+                          child: AttendanceStatusBox(
+                            ID: ID,
+                            position: position,
+                          ),
+                        )
+                      : Container(),
+                ),
+                position == "2" ? DepartmentList() : Container()
               ],
             ),
           );
         } else {
           return SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.only(top: 100, left: 250),
+              padding: const EdgeInsets.only(top: 100, left: 0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(50),
@@ -143,17 +162,36 @@ class _HomePageState extends State<HomePage> {
                               username: username,
                               scale: 2),
                           // Spacer(),
-                          const AttendanceButton(),
+                          position != "2"
+                              ? AttendanceButton(
+                                  ID: ID,
+                                  position: position,
+                                    onAttendanceMarked: _refreshAttendanceStatus,
+
+                                )
+                              : Container(),
                           const SizedBox(
                             height: 30,
                           ),
-                          AttendanceStatusBox(
-                            ID: ID,
-                          ),
+                          position != "2"
+                              ? AttendanceStatusBox(
+                                  ID: ID,
+                                  position: position,
+                                )
+                              : Container(),
                         ],
                       )
                     ],
-                  )
+                  ),
+                  SizedBox(
+                    height: 100,
+                  ),
+                  position == "2"
+                      ? Padding(
+                          padding: const EdgeInsets.only(right: 100, left: 100),
+                          child: DepartmentList(),
+                        )
+                      : Container()
                 ],
               ),
             ),
@@ -164,19 +202,112 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+class DepartmentList extends StatefulWidget {
+  const DepartmentList({super.key});
+
+  @override
+  State<DepartmentList> createState() => _DepartmentListState();
+}
+
+class _DepartmentListState extends State<DepartmentList> {
+  Future<List<dynamic>> fetchData() async {
+    var response = await http.get(
+      Uri.parse("https://nicher-o3ai.onrender.com/admin"),
+    );
+    var jsonResponse = await jsonDecode(response.body);
+    return jsonResponse;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<dynamic>>(
+      future: fetchData(),
+      builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: const CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          //snapshot.data is list
+
+          return ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: snapshot.data?.length,
+            itemBuilder: (BuildContext context, int index) {
+              String DepartmentName = snapshot.data![index]['DepartmentName'];
+              String CurrentProject = snapshot.data![index]['CurrentProject'];
+              int NumberOfEmployee = snapshot.data![index]['NumberOfEmployee'];
+              int ManagerID = snapshot.data![index]['Manager'];
+              return Card(
+                child: ListTile(
+                  title: Text(DepartmentName),
+                  subtitle: Text("Project: " +
+                      CurrentProject +
+                      " Employee: " +
+                      "$NumberOfEmployee"),
+                  trailing: SizedBox(
+                    width:
+                        120, // Set the desired width for the trailing section
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ListOfEmployee(
+                                      ID: ManagerID,
+                                    )));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor:
+                            const Color.fromARGB(255, 46, 106, 238),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        "View More",
+                        textScaleFactor: 1.3,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 255, 255, 255)),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+}
+
 class AttendanceStatusBox extends StatefulWidget {
   final ID;
-  const AttendanceStatusBox({super.key, this.ID});
+  final position;
+  const AttendanceStatusBox(
+      {super.key, @required this.ID, @required this.position});
 
   @override
   State<AttendanceStatusBox> createState() => _AttendanceStatusBoxState();
 }
 
 class _AttendanceStatusBoxState extends State<AttendanceStatusBox> {
-  Future<Map<String, dynamic>> fetchData() async {
+  Future<Map<String, dynamic>> fetchData(String position) async {
+    String link;
+    if (position == "0") {
+      link = "employee";
+    } else {
+      link = "manager";
+    }
     var response = await http.get(
       Uri.parse(
-          "https://nicher-o3ai.onrender.com/employee/attendance/${widget.ID}"),
+          "https://nicher-o3ai.onrender.com/$link/attendance/${widget.ID}"),
     );
     var jsonResponse = await jsonDecode(response.body);
     return jsonResponse;
@@ -202,7 +333,7 @@ class _AttendanceStatusBoxState extends State<AttendanceStatusBox> {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: FutureBuilder<Map<String, dynamic>>(
-          future: fetchData(),
+          future: fetchData(widget.position),
           builder: (BuildContext context,
               AsyncSnapshot<Map<String, dynamic>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -219,7 +350,7 @@ class _AttendanceStatusBoxState extends State<AttendanceStatusBox> {
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Attendacne",
+                    "Attendance",
                     style: TextStyle(color: Color.fromARGB(255, 55, 55, 55)),
                   ),
                   Expanded(
@@ -274,7 +405,11 @@ class _AttendanceStatusBoxState extends State<AttendanceStatusBox> {
 }
 
 class AttendanceButton extends StatefulWidget {
-  const AttendanceButton({super.key});
+  final ID;
+  final position;
+  final VoidCallback onAttendanceMarked;
+
+  const AttendanceButton({super.key, this.ID, this.position, required this.onAttendanceMarked});
 
   @override
   State<AttendanceButton> createState() => _AttendanceButtonState();
@@ -288,13 +423,33 @@ class _AttendanceButtonState extends State<AttendanceButton> {
   //   setState(() {});
   // }
 
+  Future<void> markAttandance() async {
+    String link;
+    if (widget.position == "0") {
+      link = "employee";
+    } else {
+      link = "manager";
+    }
+
+    var response = await http.get(
+      Uri.parse("https://nicher-o3ai.onrender.com/" +
+          link +
+          "/markattendance/${widget.ID}"),
+    );
+    var jsonResponse = await jsonDecode(response.body);
+    print(jsonResponse);
+     widget.onAttendanceMarked();
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () async {
+        await markAttandance();
+      },
       child: Container(
         height: 50,
-        width: 100,
+        width: 80,
         child: const Center(
             child: Text(
           "Present",
@@ -353,22 +508,33 @@ class _InfoDataState extends State<InfoData> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        FutureBuilder<String>(
-          future: getJobDescription(),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator(); // Show a loading indicator while waiting for the data.
-            } else if (snapshot.hasError) {
-              return Text(
-                  'Error: ${snapshot.error}'); // Display an error message if there's an error.
-            } else {
-              return Text(
-                snapshot.data!,
-                textScaleFactor: 1.0 * widget.scale,
-              ); // Display the fetched data once it's available.
-            }
-          },
-        ),
+        widget.position == "0"
+            ? FutureBuilder<String>(
+                future: getJobDescription(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator(); // Show a loading indicator while waiting for the data.
+                  } else if (snapshot.hasError) {
+                    return Text(
+                        'Error: ${snapshot.error}'); // Display an error message if there's an error.
+                  } else {
+                    return Text(
+                      snapshot.data!,
+                      textScaleFactor: 1.0 * widget.scale,
+                    ); // Display the fetched data once it's available.
+                  }
+                },
+              )
+            : widget.position == "1"
+                ? Text(
+                    "Manager",
+                    textScaleFactor: 1.0 * widget.scale,
+                  )
+                : Text(
+                    "Admin",
+                    textScaleFactor: 1.0 * widget.scale,
+                  ),
         Text(
           "${widget.ID}",
           textScaleFactor: 1.0 * widget.scale,
