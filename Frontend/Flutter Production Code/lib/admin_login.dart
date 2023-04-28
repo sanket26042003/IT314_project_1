@@ -380,7 +380,7 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
     return Form(
       key: _formkey,
       child: Padding(
-        padding: const EdgeInsets.only(top: 25, right: 25, left: 25),
+        padding: const EdgeInsets.all(25),
         child: Column(children: [
           TextFormField(
             decoration: InputDecoration(

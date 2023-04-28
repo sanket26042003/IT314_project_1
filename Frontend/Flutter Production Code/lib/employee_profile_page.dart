@@ -7,7 +7,7 @@ class EmployeeProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 46, 106, 238),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 46, 106, 238),
         elevation: 0.0,
@@ -45,6 +45,13 @@ class DesktopBody extends StatelessWidget {
     String month = date.substring(5, 7);
     String dd = date.substring(8, 10);
     return dd + "-" + month + "-" + year;
+  }
+
+  String getAddress(String add){
+    if(add.length<=50)return add;
+    else {
+      return add.substring(0,50);
+    }
   }
 
   @override
@@ -156,7 +163,7 @@ class DesktopBody extends StatelessWidget {
               ProfileDetailColumnD(title: 'Email', value: data['Email']),
               ProfileDetailColumnD(
                   title: 'Phone number', value: data['PhoneNo']),
-              ProfileDetailColumnD(title: 'Address', value: data['Address'])
+              ProfileDetailColumnD(title: 'Address', value:getAddress(data['Address']))
             ],
           ),
         ],
@@ -348,37 +355,40 @@ class ProfileDetailColumnD extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                    fontSize: 15, color: Color.fromARGB(255, 138, 137, 137)),
-              ),
-              const SizedBox(
-                height: 7,
-                width: 7,
-              ),
-              Text(
-                value,
-                style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
-              ),
-              const SizedBox(
-                height: 7,
-                width: 7,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width / 2.2,
-                child: const Divider(
-                  thickness: 1.0,
+           Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                      fontSize: 15, color: Color.fromARGB(255, 138, 137, 137)),
                 ),
-              )
-            ],
-          )
+                const SizedBox(
+                  height: 7,
+                  width: 7,
+                ),
+                Text(
+                  value,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+                const SizedBox(
+                  height: 7,
+                  width: 7,
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 2.2,
+                  child: const Divider(
+                    thickness: 1.0,
+                  ),
+                )
+              ],
+            ),
+          
         ],
       ),
     );
@@ -393,7 +403,7 @@ class ProfileDetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(right: 5, left: 5, top: 5),
+      //padding: const EdgeInsets.only(right: 5, left: 5, top: 5),
       width: MediaQuery.of(context).size.width / 2,
       //color: Colors.lightBlue,
       child: Row(
@@ -424,7 +434,7 @@ class ProfileDetailRow extends StatelessWidget {
                 width: 7,
               ),
               SizedBox(
-                width: MediaQuery.of(context).size.width / 3,
+                width: MediaQuery.of(context).size.width / 2.2,
                 child: const Divider(
                   thickness: 1.0,
                 ),

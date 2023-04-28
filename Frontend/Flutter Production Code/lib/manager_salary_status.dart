@@ -108,7 +108,7 @@ class DesktopBody extends StatelessWidget {
                         ),
                         SalaryDetailColumnD(
                             title: 'Department', value: "${data['Department']}"),
-                        SalaryDetailColumnD(title: 'Project', value: "Project"),
+                        SalaryDetailColumnD(title: 'Project', value: data["Project"]),
                         SalaryDetailColumnD(
                             title: 'Monthly Salary', value: "${data['Salary']}"),
                         SalaryDetailColumnD(
@@ -116,7 +116,7 @@ class DesktopBody extends StatelessWidget {
                             value: "${data['AbsentDates'].length}"),
                         SalaryDetailColumnD(
                             title: 'Amount to be credited',
-                            value: "${data['Salary']}")
+                            value: "${data['SalaryToCredit']}")
                       ],
                     ),
                   ),
@@ -192,13 +192,13 @@ class MobileBody extends StatelessWidget {
                     width: 30,
                   ),
                   SalaryDetailColumn(title: 'Department', value: "${data['Department']}"),
-                  SalaryDetailColumn(title: 'Project', value:"project"),
+                  SalaryDetailColumn(title: 'Project', value:data['Project']),
                   SalaryDetailColumn(
                       title: 'Monthly Salary', value: "${data['Salary']}"),
                   SalaryDetailColumn(
                       title: 'Number of absent days (in a month)', value: "${data['AbsentDates'].length}"),
                   SalaryDetailColumn(
-                      title: 'Amount to be credited', value:"${data['Salary']}")
+                      title: 'Amount to be credited', value:"${data['SalaryToCredit']}")
                 ],
               ),
             )

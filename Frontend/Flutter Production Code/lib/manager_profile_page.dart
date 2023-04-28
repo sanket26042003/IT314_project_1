@@ -8,7 +8,7 @@ class ManagerProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 46, 106, 238),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 46, 106, 238),
         elevation: 0.0,
@@ -40,6 +40,13 @@ class DesktopBody extends StatelessWidget {
     String month = date.substring(5, 7);
     String dd = date.substring(8, 10);
     return dd + "-" + month + "-" + year;
+  }
+
+   String getAddress(String add){
+    if(add.length<=50)return add;
+    else {
+      return add.substring(0,50);
+    }
   }
 
   @override
@@ -148,7 +155,7 @@ class DesktopBody extends StatelessWidget {
               ProfileDetailColumnD(
                   title: 'Phone number', value: data['PhoneNo']),
               ProfileDetailColumnD(
-                  title: 'Address', value: data['Address'])
+                  title: 'Address', value: getAddress(data['Address']))
             ],
           ),
         ],
@@ -382,7 +389,7 @@ class ProfileDetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(right: 5, left: 5, top: 5),
+      //padding: const EdgeInsets.only(right: 5, left: 5, top: 5),
       width: MediaQuery.of(context).size.width / 2,
       //color: Colors.lightBlue,
       child: Row(
@@ -413,7 +420,7 @@ class ProfileDetailRow extends StatelessWidget {
                 width: 7,
               ),
               SizedBox(
-                width: MediaQuery.of(context).size.width / 3,
+                width: MediaQuery.of(context).size.width / 2.2,
                 child: const Divider(
                   thickness: 1.0,
                 ),

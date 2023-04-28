@@ -32,15 +32,15 @@ class _ListOfEmployeeState extends State<ListOfEmployee> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.person,
-              color: Color.fromARGB(255, 255, 255, 255),
-            ),
-          )
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {},
+        //     icon: const Icon(
+        //       Icons.person,
+        //       color: Color.fromARGB(255, 255, 255, 255),
+        //     ),
+        //   )
+        // ],
       ),
       body: LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth < 600) {
