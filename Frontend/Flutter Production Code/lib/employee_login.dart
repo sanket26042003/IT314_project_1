@@ -5,6 +5,15 @@ import 'package:http/http.dart' as http;
 import 'package:nicher/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+bool  validateFormField(String? s)
+{
+  if(s!.isEmpty)
+  {
+    return true;
+  }
+  return false;
+}
+
 class EmployeeLogin extends StatelessWidget {
   const EmployeeLogin({super.key});
 
@@ -364,7 +373,7 @@ class _EmployeeLoginFormState extends State<EmployeeLoginForm> {
               username = value;
             },
             validator: (value) {
-              if (value!.isEmpty) {
+              if (validateFormField(value)) {
                 return "username can not be empty";
               }
             },
@@ -400,7 +409,7 @@ class _EmployeeLoginFormState extends State<EmployeeLoginForm> {
               password = value;
             },
             validator: (value) {
-              if (value!.isEmpty) {
+              if (validateFormField(value)) {
                 return "password can not be empty";
               }
             },

@@ -80,139 +80,139 @@ class _HomePageState extends State<HomePage> {
       ),
       body: LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth < 600) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          return CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 32, left: 16),
-                      child: InfoData(
-                          position: position,
-                          ID: ID,
-                          username: username,
-                          scale: 1),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 32, left: 50),
-                      child: position != "2"
-                          ? AttendanceButton(
-                              ID: ID,
-                              position: position,
-                              onAttendanceMarked: _refreshAttendanceStatus,
-                            )
-                          : Container(),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Divider(),
-                const SizedBox(
-                  height: 20,
-                ),
-                Center(
-                  child: position != "2"
-                      ? Padding(
-                          padding: const EdgeInsets.only(right: 35, left: 35),
-                          child: AttendanceStatusBox(
-                            ID: ID,
-                            position: position,
-                          ),
-                        )
-                      : Container(),
-                ),
-                position == "2"
-                    ? Column(
-                        children: [
-                          Text(
-                            "Departments",
-                            textScaleFactor: 1.5,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          DepartmentList(),
-                        ],
-                      )
-                    : Container()
-              ],
-            ),
-          );
-        } else {
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 100, left: 0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: Image.network(
-                          'https://th.bing.com/th/id/OIG.Zm7JwGm2K.5G5w2KJ1rr?pid=ImgGn',
-                          scale: 2,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 0.05 * size.width,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          InfoData(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 32, left: 16),
+                          child: InfoData(
                               position: position,
                               ID: ID,
                               username: username,
-                              scale: 2),
-                          // Spacer(),
-                          position != "2"
+                              scale: 1),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 32, left: 50),
+                          child: position != "2"
                               ? AttendanceButton(
                                   ID: ID,
                                   position: position,
                                   onAttendanceMarked: _refreshAttendanceStatus,
                                 )
                               : Container(),
-                          const SizedBox(
-                            height: 30,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: position != "2"
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 35, left: 35),
+                              child: AttendanceStatusBox(
+                                ID: ID,
+                                position: position,
+                              ),
+                            )
+                          : Container(),
+                    ),
+                  ],
+                ),
+              ),
+              if (position == "2") DepartmentList(),
+            ],
+          );
+        } else {
+          return CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 100, left: 0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: Image.network(
+                              'https://th.bing.com/th/id/OIG.Zm7JwGm2K.5G5w2KJ1rr?pid=ImgGn',
+                              scale: 2,
+                            ),
                           ),
-                          position != "2"
-                              ? AttendanceStatusBox(
-                                  ID: ID,
+                          SizedBox(
+                            width: 0.05 * size.width,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InfoData(
                                   position: position,
-                                )
-                              : Container(),
+                                  ID: ID,
+                                  username: username,
+                                  scale: 2),
+                              // Spacer(),
+                              position != "2"
+                                  ? AttendanceButton(
+                                      ID: ID,
+                                      position: position,
+                                      onAttendanceMarked:
+                                          _refreshAttendanceStatus,
+                                    )
+                                  : Container(),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              position != "2"
+                                  ? AttendanceStatusBox(
+                                      ID: ID,
+                                      position: position,
+                                    )
+                                  : Container(),
+                            ],
+                          ),
                         ],
-                      )
+                      ),
+                      SizedBox(
+                        height: 100,
+                      ),
                     ],
                   ),
-                  SizedBox(
-                    height: 100,
-                  ),
-                  position == "2"
-                      ? Padding(
-                          padding: const EdgeInsets.only(right: 100, left: 100),
-                          child: Column(
-                            children: [
-                              Text(
-                                "Departments",
-                                textScaleFactor: 1.5,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              DepartmentList(),
-                            ],
-                          ) ,
-                        )
-                      : Container()
-                ],
+                ),
               ),
-            ),
+              if (position == "2")
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 100, left: 100),
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Departments",
+                          textScaleFactor: 1.5,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        DepartmentListD(),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
           );
         }
       }),
@@ -228,6 +228,92 @@ class DepartmentList extends StatefulWidget {
 }
 
 class _DepartmentListState extends State<DepartmentList> {
+  Future<List<dynamic>> fetchData() async {
+    var response = await http.get(
+      Uri.parse("https://nicher-o3ai.onrender.com/admin"),
+    );
+    var jsonResponse = await jsonDecode(response.body);
+    return jsonResponse;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<dynamic>>(
+      future: fetchData(),
+      builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return SliverToBoxAdapter(
+              child: Center(child: const CircularProgressIndicator()));
+        } else if (snapshot.hasError) {
+          return SliverToBoxAdapter(child: Text('Error: ${snapshot.error}'));
+        } else {
+          //snapshot.data is list
+
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                String DepartmentName = snapshot.data![index]['DepartmentName'];
+                String CurrentProject = snapshot.data![index]['CurrentProject'];
+                int NumberOfEmployee =
+                    snapshot.data![index]['NumberOfEmployee'];
+                int ManagerID = snapshot.data![index]['Manager'];
+                return Card(
+                  child: ListTile(
+                    title: Text(DepartmentName),
+                    subtitle: Text("Project: " +
+                        CurrentProject +
+                        "\nEmployee: " +
+                        "$NumberOfEmployee"),
+                    trailing: SizedBox(
+                      width:
+                          120, // Set the desired width for the trailing section
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ListOfEmployee(
+                                        ID: ManagerID,
+                                      )));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor:
+                              const Color.fromARGB(255, 46, 106, 238),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(20),
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          "View More",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 255, 255, 255)),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              childCount: snapshot.data?.length,
+            ),
+          );
+        }
+      },
+    );
+  }
+}
+
+class DepartmentListD extends StatefulWidget {
+  const DepartmentListD({super.key});
+
+  @override
+  State<DepartmentListD> createState() => _DepartmentListDState();
+}
+
+class _DepartmentListDState extends State<DepartmentListD> {
   Future<List<dynamic>> fetchData() async {
     var response = await http.get(
       Uri.parse("https://nicher-o3ai.onrender.com/admin"),
@@ -303,6 +389,90 @@ class _DepartmentListState extends State<DepartmentList> {
     );
   }
 }
+
+// class DepartmentList extends StatefulWidget {
+//   const DepartmentList({super.key});
+
+//   @override
+//   State<DepartmentList> createState() => _DepartmentListState();
+// }
+
+// class _DepartmentListState extends State<DepartmentList> {
+//   Future<List<dynamic>> fetchData() async {
+//     var response = await http.get(
+//       Uri.parse("https://nicher-o3ai.onrender.com/admin"),
+//     );
+//     var jsonResponse = await jsonDecode(response.body);
+//     return jsonResponse;
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return FutureBuilder<List<dynamic>>(
+//       future: fetchData(),
+//       builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return Center(child: const CircularProgressIndicator());
+//         } else if (snapshot.hasError) {
+//           return Text('Error: ${snapshot.error}');
+//         } else {
+//           //snapshot.data is list
+
+//           return ListView.builder(
+//             physics: const AlwaysScrollableScrollPhysics(),
+//             shrinkWrap: true,
+//             itemCount: snapshot.data?.length,
+//             itemBuilder: (BuildContext context, int index) {
+//               String DepartmentName = snapshot.data![index]['DepartmentName'];
+//               String CurrentProject = snapshot.data![index]['CurrentProject'];
+//               int NumberOfEmployee = snapshot.data![index]['NumberOfEmployee'];
+//               int ManagerID = snapshot.data![index]['Manager'];
+//               return Card(
+//                 child: ListTile(
+//                   title: Text(DepartmentName),
+//                   subtitle: Text("Project: " +
+//                       CurrentProject +
+//                       "\nEmployee: " +
+//                       "$NumberOfEmployee"),
+//                   trailing: SizedBox(
+//                     width:
+//                         120, // Set the desired width for the trailing section
+//                     child: ElevatedButton(
+//                       onPressed: () async {
+//                         Navigator.push(
+//                             context,
+//                             MaterialPageRoute(
+//                                 builder: (context) => ListOfEmployee(
+//                                       ID: ManagerID,
+//                                     )));
+//                       },
+//                       style: ElevatedButton.styleFrom(
+//                         elevation: 0,
+//                         backgroundColor:
+//                             const Color.fromARGB(255, 46, 106, 238),
+//                         shape: const RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.all(
+//                             Radius.circular(20),
+//                           ),
+//                         ),
+//                       ),
+//                       child: const Text(
+//                         "View More",
+//                         style: TextStyle(
+//                             fontWeight: FontWeight.bold,
+//                             color: Color.fromARGB(255, 255, 255, 255)),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               );
+//             },
+//           );
+//         }
+//       },
+//     );
+//   }
+// }
 
 class AttendanceStatusBox extends StatefulWidget {
   final ID;

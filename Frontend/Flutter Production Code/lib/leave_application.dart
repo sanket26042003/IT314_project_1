@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:nicher/leave_application_list.dart';
+import 'package:nicher/validators.dart';
 
-void main() {
-  runApp(const LeaveApplication());
-}
+// void main() {
+//   runApp(const LeaveApplication());
+// }
 
 class LeaveApplication extends StatefulWidget {
   final token;
@@ -35,7 +36,14 @@ class _LeaveApplicationState extends State<LeaveApplication> {
   Widget build(BuildContext context) {
     return Scaffold(
       // Remove the debug banner
-      appBar: AppBar(title: const Text('Leave Application')),
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 46, 106, 238),
+        elevation: 0.0,
+        title: const Text(
+          "Leave Application",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
       body: LeaveApplicationForm(
         ID: ID,
         token: widget.token,
@@ -110,277 +118,129 @@ class _LeaveApplicationFormState extends State<LeaveApplicationForm> {
     });
   }
 
-  Future<void> createLeave() async {
-    var leaveBody = {
-      "ApplicantEmployeeID": widget.ID,
-      "ApplicationType": selectedValue,
-      "LeaveStartDate": "${start_year}-${start_month}-${start_date}",
-      "LeaveEndDate": "${last_year}-${last_month}-${last_date}"
-    };
-    //  print("hello1");
-    var response = await http.post(
-        Uri.parse("https://nicher-o3ai.onrender.com/leave"),
-        headers: <String, String>{"Content-Type": "application/json"},
-        body: jsonEncode(leaveBody));
-    //   print("hello2");
-    // var response = await http.post(Uri.parse("http://localhost:3000/login"),
-    //     headers: <String, String>{"Content-Type": "application/json"},
-    //     body: jsonEncode(loginBody));
+  bool validateDates(int startDate, int startMonth, int startYear, int endDate,
+      int endMonth, int endYear) {
+    int ans = Validators.checkDates(
+        startDate, startMonth, startYear, endDate, endMonth, endYear);
 
-    var jsonResponse = jsonDecode(response.body);
-    
+    if (ans == 0) {
+      return true;
+    } else if (ans == 1) {
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Something went wrong!!!!'),
+          content:
+              const Text('End date should be greater than the start date.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'OK'),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return false;
+    }
+    else{
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Something went wrong!!!!'),
+          content: const Text(
+              'Start date should be greater than or equal to today.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'OK'),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return false;
+    }
+  }
+
+  Future<void> createLeave() async {
+    if (validateDates(start_date!, start_month!, start_year!, last_date!,
+        last_month!, last_year!)) {
+      var leaveBody = {
+        "ApplicantEmployeeID": widget.ID,
+        "ApplicationType": selectedValue,
+        "LeaveStartDate": "${start_year}-${start_month}-${start_date}",
+        "LeaveEndDate": "${last_year}-${last_month}-${last_date}"
+      };
+      //  print("hello1");
+      var response = await http.post(
+          Uri.parse("https://nicher-o3ai.onrender.com/leave"),
+          headers: <String, String>{"Content-Type": "application/json"},
+          body: jsonEncode(leaveBody));
+      //   print("hello2");
+      // var response = await http.post(Uri.parse("http://localhost:3000/login"),
+      //     headers: <String, String>{"Content-Type": "application/json"},
+      //     body: jsonEncode(loginBody));
+
+      var jsonResponse = jsonDecode(response.body);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LeaveApplicationList(
+                    token: widget.token,
+                  )));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 46, 106, 238),
-          elevation: 0.0,
-          title: const Text(
-            "Leave Application",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-        body: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-              // mainAxisAlignment: MainAxisAlignment.start,
+    return Container(
+      padding: const EdgeInsets.only(top: 20, left: 10),
+      child: Column(
+          // mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Employee ID: ",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text("${widget.ID}",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                ]),
+            SizedBox(
+              child: Divider(thickness: 1),
+            ),
+            // Show the Date Picker when this button clicked
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Select the start date of Leave",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            // ElevatedButton(
+            //   onPressed: _presentDatePicker,
+            //   child: const Text('Select Date'),
+            // ),
+            Row(
               children: [
-                Row(
-                    // mainAxisAlignment: MainAxisAlignment.start,
-                    // crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Employee ID: ",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      Text("${widget.ID}",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                    ]),
-                SizedBox(
-                  child: Divider(thickness: 1),
-                ),
-                // Show the Date Picker when this button clicked
-                SizedBox(
-                  height: 10,
-                ),
                 Text(
-                  "Select the start date of Leave",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  "Selected Date: ${start_date != null ? start_date : "00"}/${start_month != null ? start_month : "00"}/${start_year != null ? start_year : "0000"}",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
-                  height: 20,
-                ),
-                // ElevatedButton(
-                //   onPressed: _presentDatePicker,
-                //   child: const Text('Select Date'),
-                // ),
-                Row(
-                  children: [
-                    Text(
-                      "Selected Date: ${start_date != null ? start_date : "00"}/${start_month != null ? start_month : "00"}/${start_year != null ? start_year : "0000"}",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    SizedBox(
-                      //button///////////////
-                      height: 40,
-                      width: 120,
-                      child: ElevatedButton(
-                        onPressed: _startDatePicker,
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor:
-                              const Color.fromARGB(255, 46, 106, 238),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20),
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          "Start Date",
-                          textScaleFactor: 1.3,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 255, 255, 255)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                  child: Divider(thickness: 1),
-                ),
-
-                //////////////////////////////////////////////////////////////////
-                ////////////////////2nd date choose/////////////////////////////
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  "Select the last date of Leave",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                // ElevatedButton(
-                //   onPressed: _presentDatePicker,
-                //   child: const Text('Select Date'),
-                // ),
-                Row(
-                  children: [
-                    Text(
-                      "Selected Date: ${last_date != null ? last_date : "00"}/${last_month != null ? last_month : "00"}/${last_year != null ? last_year : "0000"}",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    SizedBox(
-                      //button///////////////
-                      height: 40,
-                      width: 120,
-                      child: ElevatedButton(
-                        onPressed: _lastDatePicker,
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor:
-                              const Color.fromARGB(255, 46, 106, 238),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20),
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          "Last Date",
-                          textScaleFactor: 1.3,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 255, 255, 255)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                  child: Divider(thickness: 1),
-                ),
-                /////////////////////////2nd date choose over///////////////
-                /////////////////////////
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  child: Row(
-                    children: [
-                      Text(
-                        "Leave Type: ",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      DropdownButton(
-                          // 'Medical', 'WFH', 'Parental', 'Others'
-                          value: selectedValue,
-                          items: [
-                            DropdownMenuItem(
-                              child: Text(
-                                "Medical",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              value: "Medical",
-                            ),
-                            DropdownMenuItem(
-                              child: Text(
-                                "WFH",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              value: "WFH",
-                            ),
-                            DropdownMenuItem(
-                              child: Text(
-                                "Parental",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              value: "Parental",
-                            ),
-                            DropdownMenuItem(
-                                child: Text(
-                                  "Others",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                value: "Others"),
-                          ],
-                          onChanged: (value) {
-                            setState(() {
-                              selectedValue = value!;
-                            });
-                          }),
-                    ],
-                  ),
-                ),
-                // SizedBox(
-                //   height: 20,
-                //   child: Divider(thickness: 1),
-                // ),
-                SizedBox(
-                  height: 20,
-                ),
-                /////////////////////////////dropdown over/////////////
-                /////////////////////////////////////////////
-                // Container(
-                //     child: Row(
-                //   children: [
-                //     Text(
-                //       "Remarks: ",
-                //       style: TextStyle(
-                //           fontSize: 20, fontWeight: FontWeight.bold),
-                //     ),
-                //     TextFormField(
-                //       decoration: InputDecoration(
-                //           border: OutlineInputBorder(),
-                //           labelText: "Write Details"),
-                //       onChanged: (text) => setState(() {
-                //         currentText = text;
-                //       }),
-                //     )
-                //   ],
-                // )),
-                SizedBox(
-                  height: 30,
+                  width: 20,
                 ),
                 SizedBox(
                   //button///////////////
-                  height: 50,
-                  width: 150,
+                  height: 40,
+                  width: 120,
                   child: ElevatedButton(
-                     onPressed: () async => {
-                     await createLeave(),
-                      
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LeaveApplicationList(
-                                    token: widget.token,
-                                  )))
-                    },
+                    onPressed: _startDatePicker,
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
                       backgroundColor: const Color.fromARGB(255, 46, 106, 238),
@@ -391,16 +251,191 @@ class _LeaveApplicationFormState extends State<LeaveApplicationForm> {
                       ),
                     ),
                     child: const Text(
-                      "Submit",
-                      textScaleFactor: 1.3,
+                      "Start Date",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color.fromARGB(255, 255, 255, 255)),
                     ),
                   ),
                 ),
-              ]),
-        ));
+              ],
+            ),
+            SizedBox(
+              height: 20,
+              child: Divider(thickness: 1),
+            ),
+
+            //////////////////////////////////////////////////////////////////
+            ////////////////////2nd date choose/////////////////////////////
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Select the last date of Leave",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            // ElevatedButton(
+            //   onPressed: _presentDatePicker,
+            //   child: const Text('Select Date'),
+            // ),
+            Row(
+              children: [
+                Text(
+                  "Selected Date: ${last_date != null ? last_date : "00"}/${last_month != null ? last_month : "00"}/${last_year != null ? last_year : "0000"}",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                SizedBox(
+                  //button///////////////
+                  height: 40,
+                  width: 120,
+                  child: ElevatedButton(
+                    onPressed: _lastDatePicker,
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: const Color.fromARGB(255, 46, 106, 238),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(20),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      "Last Date",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 255, 255, 255)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 20,
+              child: Divider(thickness: 1),
+            ),
+            /////////////////////////2nd date choose over///////////////
+            /////////////////////////
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              child: Row(
+                children: [
+                  Text(
+                    "Leave Type: ",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  DropdownButton(
+                      // 'Medical', 'WFH', 'Parental', 'Others'
+                      value: selectedValue,
+                      items: [
+                        DropdownMenuItem(
+                          child: Text(
+                            "Medical",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          value: "Medical",
+                        ),
+                        DropdownMenuItem(
+                          child: Text(
+                            "WFH",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          value: "WFH",
+                        ),
+                        DropdownMenuItem(
+                          child: Text(
+                            "Parental",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          value: "Parental",
+                        ),
+                        DropdownMenuItem(
+                            child: Text(
+                              "Others",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            value: "Others"),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedValue = value!;
+                        });
+                      }),
+                ],
+              ),
+            ),
+            // SizedBox(
+            //   height: 20,
+            //   child: Divider(thickness: 1),
+            // ),
+            SizedBox(
+              height: 20,
+            ),
+            /////////////////////////////dropdown over/////////////
+            /////////////////////////////////////////////
+            // Container(
+            //     child: Row(
+            //   children: [
+            //     Text(
+            //       "Remarks: ",
+            //       style: TextStyle(
+            //           fontSize: 20, fontWeight: FontWeight.bold),
+            //     ),
+            //     TextFormField(
+            //       decoration: InputDecoration(
+            //           border: OutlineInputBorder(),
+            //           labelText: "Write Details"),
+            //       onChanged: (text) => setState(() {
+            //         currentText = text;
+            //       }),
+            //     )
+            //   ],
+            // )),
+            SizedBox(
+              height: 30,
+            ),
+            SizedBox(
+              //button///////////////
+              height: 50,
+              width: 150,
+              child: ElevatedButton(
+                onPressed: () async => {
+                  await createLeave(),
+                },
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: const Color.fromARGB(255, 46, 106, 238),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20),
+                    ),
+                  ),
+                ),
+                child: const Text(
+                  "Submit",
+                  textScaleFactor: 1.3,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 255, 255, 255)),
+                ),
+              ),
+            ),
+          ]),
+    );
   }
 }
 

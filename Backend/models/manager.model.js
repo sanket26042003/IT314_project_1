@@ -51,10 +51,15 @@ var ManagerDetails = new mongoose.Schema(
             type: Number,
             required: true
         },
+        DateOfJoining:{
+            type: Date
+        },
+        DateOfBirth:{
+            type: Date
+        },
         AbsentDates : [{
             type: Date
         }]
-
     }
 )
 

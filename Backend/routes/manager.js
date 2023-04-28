@@ -15,6 +15,7 @@ router.post('/', async (req,res)=>{                                   // Create 
         newmanager.ManagerID = query.NoOfManager;
         const dept = await Department.findOne({DepartmentID:newmanager.Department});
         newmanager.DepartmentName = dept.DepartmentName;
+        newmanager.DateOfJoining = Date.now();
         const result = await Manager.create(newmanager);
         res.status(200).json({"success":"true"}) ;
     }catch(err){
@@ -33,7 +34,7 @@ router.patch('/:id', async (req,res)=>{                               // edit ma
 
 router.get('/:id', async(req, res)=>{                                    // manager profile
     try{
-        const ans = await Manager.findOne({ManagerID:req.params.id});    // Get the manager document with given managerID
+        const ans = await Manager.findOne({ManagerID:req.params.id}).lean();    // Get the manager document with given managerID
         ans.SalaryToCredit = ans.Salary/22*(22-ans.AbsentDates.length) ;
         if(ans == null)
         res.status(500).json(ans);

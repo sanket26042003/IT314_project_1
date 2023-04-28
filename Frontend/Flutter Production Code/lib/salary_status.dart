@@ -118,7 +118,7 @@ class DesktopBody extends StatelessWidget {
                             value: "${data['AbsentDates'].length}"),
                         SalaryDetailColumnD(
                             title: 'Amount to be credited',
-                            value: "${data['Salary']}")
+                            value: "${data['SalaryToCredit']}")
                       ],
                     ),
                   ),
@@ -200,7 +200,7 @@ class MobileBody extends StatelessWidget {
                   SalaryDetailColumn(
                       title: 'Number of absent days (in a month)', value: "${data['AbsentDates'].length}"),
                   SalaryDetailColumn(
-                      title: 'Amount to be credited', value: "${data['Salary']}")
+                      title: 'Amount to be credited', value: "${data['SalaryToCredit']}")
                 ],
               ),
             )

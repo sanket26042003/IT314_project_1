@@ -26,19 +26,19 @@ router.post('/employeelogin', async (req, res) => {
             position: "0" // 0 for employee
         };
 
-        const token = await jwt.sign(tokenData, "secret", { expiresIn: "1h" });
+        const token = await jwt.sign(tokenData, "secret", { expiresIn: 60*2 });
 
-        // .cookie("access_token", token, {
-        //     httpOnly: true,
-        //     secure: process.env.NODE_ENV === "production",
-        // })
         return res
-            .status(200)
-            .setHeader('Set-Cookie', `access_token=${token}`)
-            .json({
-                status: true,
-                success: "SendData"
-            })
+        .status(200)
+        .cookie("access_token", token, {
+            httpOnly: true,
+            secure: process.Env.NODE_ENV === "production",
+        })
+        .json({
+            status: true,
+            success: "SendData",
+            token: token
+        })
 
     } catch (err) {
         console.log(err);
@@ -71,18 +71,19 @@ router.post('/managerlogin', async (req, res) => {
             position: "1" // 1 for manager
         };
 
-        const token = await jwt.sign(tokenData, "secret", { expiresIn: "1h" });
+        const token = await jwt.sign(tokenData, "secret", { expiresIn: 60*2 });
 
         res
-            .status(200)
-            .cookie("access_token", token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-            })
-            .json({
-                status: true,
-                success: "SendData"
-            })
+        .status(200)
+        .cookie("access_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        })
+        .json({
+            status: true,
+            success: "SendData",
+            token: token
+        })
 
     } catch (err) {
         console.log(err);
@@ -111,18 +112,19 @@ router.post('/adminlogin', async (req, res) => {
             position: "2" // 0 for admin
         };
 
-        const token = await jwt.sign(tokenData, "secret", { expiresIn: "1h" });
+        const token = await jwt.sign(tokenData, "secret", { expiresIn: 60*2 });
 
         res
-            .status(200)
-            .cookie("access_token", token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-            })
-            .json({
-                status: true,
-                success: "SendData"
-            })
+        .status(200)
+        .cookie("access_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        })
+        .json({
+            status: true,
+            success: "SendData",
+            token: token
+        })
     } catch (err) {
         console.log(err);
         return res

@@ -1,10 +1,17 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:nicher/employee_login.dart';
-
 import 'employee_list.dart';
+
+bool  validateFormField(String? s)
+{
+  if(s!.isEmpty)
+  {
+    return true;
+  }
+  return false;
+}
 
 
 class CreateEmployee extends StatefulWidget {
@@ -120,6 +127,10 @@ class _MobileBodyState extends State<MobileBody> {
           body: jsonEncode(signupBody));
 
      var jsonResponse = await jsonDecode(response.body);
+     Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>  ListOfEmployee(ID:widget.ID ,)));
      
     }
   }
@@ -150,8 +161,8 @@ class _MobileBodyState extends State<MobileBody> {
                     name = value;
                   },
                   validator: (value) {
-                    if (value!.isEmpty) {
-                      return "username can not be empty";
+                    if (validateFormField(value)) {
+                      return "Name can not be empty";
                     }
                   },
                 ),
@@ -173,8 +184,8 @@ class _MobileBodyState extends State<MobileBody> {
                     username = value;
                   },
                   validator: (value) {
-                    if (value!.isEmpty) {
-                      return "username can not be empty";
+                    if (validateFormField(value)) {
+                      return "Username can not be empty";
                     }
                   },
                 ),
@@ -210,8 +221,8 @@ class _MobileBodyState extends State<MobileBody> {
                     password = value;
                   },
                   validator: (value) {
-                    if (value!.isEmpty) {
-                      return "password can not be empty";
+                    if (validateFormField(value)) {
+                      return "Password can not be empty";
                     }
                   },
                 ),
@@ -233,8 +244,8 @@ class _MobileBodyState extends State<MobileBody> {
                     email = value;
                   },
                   validator: (value) {
-                    if (value!.isEmpty) {
-                      return "username can not be empty";
+                    if (validateFormField(value)) {
+                      return "Email can not be empty";
                     }
                   },
                 ),
@@ -256,8 +267,8 @@ class _MobileBodyState extends State<MobileBody> {
                     gender = value;
                   },
                   validator: (value) {
-                    if (value!.isEmpty) {
-                      return "username can not be empty";
+                    if (validateFormField(value)) {
+                      return "Gender can not be empty";
                     }
                   },
                 ),
@@ -279,8 +290,8 @@ class _MobileBodyState extends State<MobileBody> {
                     address = value;
                   },
                   validator: (value) {
-                    if (value!.isEmpty) {
-                      return "username can not be empty";
+                    if (validateFormField(value)) {
+                      return "Address can not be empty";
                     }
                   },
                 ),
@@ -302,8 +313,8 @@ class _MobileBodyState extends State<MobileBody> {
                     phoneno = value;
                   },
                   validator: (value) {
-                    if (value!.isEmpty) {
-                      return "username can not be empty";
+                    if (validateFormField(value)) {
+                      return "Phone number can not be empty";
                     }
                   },
                 ),
@@ -325,8 +336,8 @@ class _MobileBodyState extends State<MobileBody> {
                     post = value;
                   },
                   validator: (value) {
-                    if (value!.isEmpty) {
-                      return "username can not be empty";
+                    if (validateFormField(value)) {
+                      return "Post can not be empty";
                     }
                   },
                 ),
@@ -348,8 +359,8 @@ class _MobileBodyState extends State<MobileBody> {
                     salary = value;
                   },
                   validator: (value) {
-                    if (value!.isEmpty) {
-                      return "username can not be empty";
+                    if (validateFormField(value)) {
+                      return "Salary can not be empty";
                     }
                   },
                 ),
@@ -359,10 +370,7 @@ class _MobileBodyState extends State<MobileBody> {
                 InkWell(
                   onTap: () async{
                    await createEmployee();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>  ListOfEmployee(ID:widget.ID ,)));
+                    
                   },
                   child: Container(
                     width: 200,

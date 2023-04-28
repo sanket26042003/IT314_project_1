@@ -1,6 +1,4 @@
 const mongoose = require('mongoose') ;
-const Department = require('./departments.model')
-const plm = require('passport-local-mongoose');
 const bcrypt = require('bcrypt');
 
 var EmployeeDetails = new mongoose.Schema(
@@ -46,7 +44,7 @@ var EmployeeDetails = new mongoose.Schema(
             field:'DepartmentID'
         },
         DepartmentName:{
-            type: String
+            type: String,
         },
         Post:{
             type: String,
